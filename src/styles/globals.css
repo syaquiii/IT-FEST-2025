@@ -4,6 +4,7 @@
   --color-ourblack: #383838;
   --color-ourwhite: #d9d9d9;
   --color-ourgray: #cccccc;
+  --color-ourblue: #0000FF; 
 }
 .mycontainer {
   @apply container mx-auto lg:px-12 md:px-32 px-8  xl:px-24;
