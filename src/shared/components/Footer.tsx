@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { footlink } from "../data/footlink";
-import Navlist from "./Navlist";
 import FootList from "./FootList";
 import { Instagram } from "lucide-react";
 
