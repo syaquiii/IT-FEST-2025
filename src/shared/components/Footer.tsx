@@ -7,7 +7,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="h-screen md:h-fit">
+    <footer className="min-h-[35rem] md:min-h-fit ">
       <div className="mycontainer mb-20 ">
         <div className="flex md:flex-row  flex-col justify-center md:justify-between lg:mx-40">
           <section className="flex gap-y-4 flex-col md:flex-row justify-center items-center md:gap-10">
@@ -34,7 +34,7 @@ const Footer = () => {
           </section>
         </div>
       </div>
-      <div className="border-t-2  text-center">
+      <div className="border-t-2   text-center">
         @ IT FEST All rights reserved.
       </div>
     </footer>
