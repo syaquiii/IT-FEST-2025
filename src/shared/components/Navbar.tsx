@@ -16,11 +16,11 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="mycontainer py-4 items-center lg:flex hidden justify-between">
-        <div className="w-1/5 font-bold text-2xl">
+      <nav className="mycontainer  py-4 items-center lg:flex hidden justify-between">
+        <div className="w-1/5 font-robotech  font-bold text-2xl">
           <h1>IT FEST</h1>
         </div>
-        <ul className="w-3/5 flex justify-center gap-8">
+        <ul className="w-3/5 flex font-changa justify-center gap-8">
           {Navlink.map((item) => {
             return <Navlist key={item.id} item={item} />;
           })}

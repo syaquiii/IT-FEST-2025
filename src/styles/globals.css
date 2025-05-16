@@ -5,6 +5,10 @@
   --color-ourwhite: #d9d9d9;
   --color-ourgray: #cccccc;
   --color-ourblue: #0000ff;
+  --font-*: initial;
+  --font-neighbor: "neighbor", sans-serif;
+  --font-robotech: "robotech", sans-serif;
+  --font-changa: "changa", sans-serif;
 }
 .mycontainer {
   @apply container mx-auto lg:px-12 md:px-32 px-8  xl:px-24;
