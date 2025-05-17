@@ -5,8 +5,16 @@ import Link from "next/link";
 interface NavlistProps {
   item: TNavLink;
 }
+
 const Navlist: FC<NavlistProps> = ({ item }) => {
-  return <Link href={item.href}>{item.title}</Link>;
+  return (
+    <Link
+      className="text-white text-2xl font-bold font-changa"
+      href={item.href}
+    >
+      {item.title}
+    </Link>
+  );
 };
 
 export default Navlist;
