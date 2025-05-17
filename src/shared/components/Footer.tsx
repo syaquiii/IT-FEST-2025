@@ -9,9 +9,9 @@ import whatsapp from "../../assets/img/footer/whatsapp.webp";
 
 const Footer = () => {
   return (
-    <footer className="min-h-[35rem] md:min-h-fit bg-linear-180 from-blue-500 to-blue-400 text-white font-changa">
+    <footer className="min-h-[35rem] md:min-h-fit bg-linear-180 from-blue-500 to-blue-400 text-white font-changa border-t-5 border-blue-250">
       <div className="mycontainer mb-20">
-        <div className="pt-24 flex md:flex-row flex-col justify-center md:justify-between">
+        <div className="pt-24 flex lg:flex-row flex-col justify-center md:justify-between">
           <section className="flex gap-y-4 flex-col justify-center md:gap-6 ">
             <div className="flex items-center gap-10 ">
               <Image src={logoitfest} alt="Logo" className="w-30 h-30" />
@@ -32,7 +32,6 @@ const Footer = () => {
                 <p className="w-5">Wildan</p>
               </div>
             </div>
-
             <div className="space-y-4 ">
               <h1 className="font-semibold text-3xl">Social Media</h1>
               <div className="flex gap-5 items-center text-blue-200">
@@ -47,7 +46,9 @@ const Footer = () => {
           </section>
         </div>
       </div>
-      <div className="border-t-2   text-center">Made with ❤️ by PIT KBMDSI</div>
+      <div className=" border-t-5 border-purple-border text-center py-6">
+        Made with ❤️ by PIT KBMDSI
+      </div>
     </footer>
   );
 };
