@@ -9,7 +9,33 @@
   --font-neighbor: "neighbor", sans-serif;
   --font-robotech: "robotech", sans-serif;
   --font-changa: "changa", sans-serif;
+
+  /* COLOR DESIGN SYSTEM */
+  --color-white: #f0f0f0;
+  /* BLUE */
+  --color-gray-400: #4f5d6e;
+  --color-gray-800: #182636;
+  --color-blue-100: #b3c9e3;
+  --color-blue-200: #6794c7;
+  --color-blue-250: #3ab0ca;
+  --color-blue-300: #3f5daa;
+  --color-blue-350: #143861;
+  --color-blue-400: #171f74;
+  --color-blue-500: #030d35;
+  /* purple */
+  --color-purple-100: #c3b8ea;
+  --color-purple-200: #8872d5;
+  --color-purple-300: #4d2cc1;
+  --color-purple-400: #331d80;
+  --color-purple-500: #190e40;
+  /* butTON */
+  --color-button-bg: #072547;
+  --color-button-text: #85fff5;
 }
 .mycontainer {
   @apply container mx-auto lg:px-12 md:px-32 px-8  xl:px-24;
+}
+
+.text-glow {
+  text-shadow: 0px 0px 30px rgba(255, 255, 255, 0.6);
 }

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Navlink } from "../data/navlink";
 import Navlist from "./Navlist";
 import Hamburger from "hamburger-react";
+import { Button } from "./ui/Button";
 
 const MobileNav = () => {
   return (
@@ -25,10 +26,10 @@ const Navbar = () => {
             return <Navlist key={item.id} item={item} />;
           })}
         </ul>
-        <div className="w-1/5 flex justify-end">
-          <button className="px-6 py-2 bg-blue-500 text-white rounded-md">
+        <div className="w-1/5  flex justify-end">
+          <Button variant={"primary"} size={"small"}>
             Login
-          </button>
+          </Button>
         </div>
       </nav>
 
