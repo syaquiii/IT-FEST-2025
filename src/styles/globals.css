@@ -35,3 +35,7 @@
 .mycontainer {
   @apply container mx-auto lg:px-12 md:px-32 px-8  xl:px-24;
 }
+
+.text-glow {
+  text-shadow: 0px 0px 30px rgba(255, 255, 255, 0.6);
+}
