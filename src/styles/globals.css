@@ -31,9 +31,11 @@
   /* butTON */
   --color-button-bg: #072547;
   --color-button-text: #85fff5;
+  /* border */
+  --color-purple-border: #441E96;
 }
 .mycontainer {
-  @apply container mx-auto lg:px-12 md:px-32 px-8  xl:px-24;
+  @apply container mx-auto lg:px-8 md:px-28 px-8  xl:px-24;
 }
 
 .text-glow {
