@@ -1,9 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { Navlink } from "../data/navlink";
 import Navlist from "./Navlist";
 import Hamburger from "hamburger-react";
 import { Button } from "./ui/Button";
+import useScrollNavbar from "../hooks/useScrollBar";
 
 const MobileNav = () => {
   return (
@@ -14,25 +15,8 @@ const MobileNav = () => {
 };
 
 const Navbar = () => {
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const { isVisible } = useScrollNavbar(100, 300); // {dia akan scroll dari y berapa} ke {dia akan scroll sampai y berapa}
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY) {
-        setIsVisible(false); // Menghilangkan navbar saat scroll turun
-      } else {
-        setIsVisible(true); // Menampilkan navbar saat scroll naik
-      }
-      setLastScrollY(window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [lastScrollY]);
 
   return (
     <>
@@ -56,9 +40,10 @@ const Navbar = () => {
           </Button>
         </div>
       </nav>
+
       {/* Mobile Navbar */}
       <nav
-        className={`mycontainer bg-transparent flex z-40  py-4 fixed justify-between items-center lg:hidden transition-transform duration-300 ${
+        className={`mycontainer bg-transparent flex z-40 py-4 fixed justify-between items-center lg:hidden transition-transform duration-300 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
@@ -74,7 +59,8 @@ const Navbar = () => {
           />
         </div>
       </nav>
-      {/* Render MobileNav berdasarkan isOpen */}
+
+      {/* Render MobileNav based on isOpen */}
       {isOpen && <MobileNav />}
     </>
   );
