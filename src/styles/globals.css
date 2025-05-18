@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin 'tailwind-scrollbar';
 
 @theme {
   --color-ourblack: #383838;
@@ -44,4 +45,11 @@
 
 .comingsoonbg {
   background: linear-gradient(180deg, #0b0335 29.78%, #19217c 80%), #fff;
+}
+.timelinebg {
+  background: linear-gradient(180deg, #0a2a4d 0%, #092749 100%);
+}
+
+.timelinecontainer {
+  @apply md:px-20 container mx-auto px-4 right-0 left-0;
 }
