@@ -15,29 +15,31 @@ const MobileNav = () => {
 };
 
 const Navbar = () => {
-  const { isVisible } = useScrollNavbar(100, 300); // {dia akan scroll dari y berapa} ke {dia akan scroll sampai y berapa}
+  const { isVisible } = useScrollNavbar(100, 700); // {dia akan scroll dari y berapa} ke {dia akan scroll sampai y berapa}
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       {/* Desktop Navbar */}
       <nav
-        className={`mycontainer fixed right-0 left-0 py-4 items-center lg:flex hidden justify-between transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
+        className={`  fixed right-0 left-0 py-4 z-20 transition-transform duration-300 ${
+          isVisible ? "translate-y-0 bg-blue-500" : "-translate-y-full"
         }`}
       >
-        <div className="w-1/5 font-robotech text-white text-glow text-6xl font-bold">
-          <h1>IT FEST</h1>
-        </div>
-        <ul className="w-3/5 flex justify-center gap-8">
-          {Navlink.map((item) => (
-            <Navlist key={item.id} item={item} />
-          ))}
-        </ul>
-        <div className="w-1/5 flex justify-end">
-          <Button variant={"primary"} size={"small"}>
-            Daftar
-          </Button>
+        <div className=" mycontainer items-center lg:flex hidden justify-between">
+          <div className="w-1/5 font-robotech text-white text-glow text-6xl font-bold">
+            <h1>IT FEST</h1>
+          </div>
+          <ul className="w-3/5 flex justify-center gap-8">
+            {Navlink.map((item) => (
+              <Navlist key={item.id} item={item} />
+            ))}
+          </ul>
+          <div className="w-1/5 flex justify-end">
+            <Button variant={"primary"} size={"small"}>
+              Daftar
+            </Button>
+          </div>
         </div>
       </nav>
 
