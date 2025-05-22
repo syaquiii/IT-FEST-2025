@@ -22,6 +22,7 @@
   --color-blue-300: #3f5daa;
   --color-blue-350: #143861;
   --color-blue-400: #171f74;
+  --color-blue-450: #0a2a4d;
   --color-blue-500: #030d35;
   /* purple */
   --color-purple-100: #c3b8ea;
@@ -65,4 +66,8 @@
   border-radius: 1919px;
   background: radial-gradient(46.69% 50% at 50% 50%, #32378e 0%, #091e4c 100%);
   mix-blend-mode: lighten;
+}
+
+.herocontainer {
+  @apply container right-0 left-0 mx-auto lg:px-8 md:px-28 px-8  xl:px-64;
 }
