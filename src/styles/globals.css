@@ -53,3 +53,16 @@
 .timelinecontainer {
   @apply md:px-20 container mx-auto px-4 right-0 left-0;
 }
+
+.specialprizebg {
+  background: linear-gradient(180deg, #092749 0%, #09184d 100%);
+}
+
+.textprizeglow {
+  text-shadow: 0px 0px 39.268px #8872d5;
+}
+.textprizeglowbanget {
+  border-radius: 1919px;
+  background: radial-gradient(46.69% 50% at 50% 50%, #32378e 0%, #091e4c 100%);
+  mix-blend-mode: lighten;
+}

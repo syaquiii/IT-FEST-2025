@@ -1,3 +1,4 @@
+import SpecialPrizeContainer from "@/feature/special-prize/container/container";
 import TimelineContainer from "@/feature/timeline/container/container";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
       {/* YOUR CONTAINER PAGE COMPONENT HERE */}
       <div className="this is your another bg-blue-500 components min-h-screen"></div>
       <TimelineContainer />
+      <SpecialPrizeContainer />
     </main>
   );
 }
