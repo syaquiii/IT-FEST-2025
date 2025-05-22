@@ -22,8 +22,8 @@ const Navbar = () => {
     <>
       {/* Desktop Navbar */}
       <nav
-        className={`  fixed right-0 left-0 py-4 z-20 transition-transform duration-300 ${
-          isVisible ? "translate-y-0 bg-blue-500" : "-translate-y-full"
+        className={`  fixed right-0 left-0 top-0 py-4 z-20 transition-transform duration-300 ${
+          isVisible ? "translate-y-0 lg:bg-blue-500" : "-translate-y-full"
         }`}
       >
         <div className=" mycontainer items-center lg:flex hidden justify-between">
