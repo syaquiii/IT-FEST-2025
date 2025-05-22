@@ -14,7 +14,7 @@ const PrizeCount = () => {
   return (
     <p
       ref={ref}
-      className="text-center font-robotech relative text-4xl md:text-8xl lg:text-8xl textprizeglow text-blue-100"
+      className="text-center font-robotech relative xl:text-9xl lg:text-4xl  text-6xl  textprizeglow text-blue-100"
     >
       RP.{formattedCount}
     </p>

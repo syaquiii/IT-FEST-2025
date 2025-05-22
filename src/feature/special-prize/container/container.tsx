@@ -5,7 +5,7 @@ import Hero from "../components/Hero";
 
 const SpecialPrizeContainer = () => {
   return (
-    <main className="min-h-screen w-full relative specialprizebg">
+    <main className="min-h-screen w-full relative specialprizebg overflow-x-hidden">
       <MeteorOrnament />
       <Hero />
       <FooterOrnament />
