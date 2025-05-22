@@ -7,12 +7,12 @@ import Image from "next/image";
 const Hero = () => {
   return (
     <section className="relative h-[100lvh] w-full font-changa ">
-      <main className="text-white flex lg:flex-row lg:gap-4 gap-8 justify-around flex-col items-center lg:pt-50 pt-60">
-        <div className="xl:w-xl lg:w-lg w-96 flex flex-col gap-4">
-          <h1 className="font-neighbor lg:text-6xl text-4xl">
+      <main className="text-white flex lg:flex-row lg:gap-4 gap-8 justify-around flex-col items-center lg:pt-50 pt-30">
+        <div className="xl:w-xl lg:w-lg w-96 flex flex-col gap-4 mycontainer">
+          <h1 className="font-neighbor lg:text-6xl text-4xl text-left">
             WHAT IS IT FEST?
           </h1>
-          <p className="xl:text-2xl md:text-lg text-sm text-justify">
+          <p className="xl:text-2xl md:text-lg text-sm text-justify indent-7">
             IT Fest adalah event teknologi yang diselenggarakan oleh KBMDSI UB,
             dengan tujuan untuk blablabla. Event ini terdiri dari 2 lomba, yaitu
             UIUX dan Business Plan, sebagai kompetisi antar mahasiswa PT di

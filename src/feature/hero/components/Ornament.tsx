@@ -11,7 +11,7 @@ const Ornament = () => {
       <Image
         src={Ornament1}
         alt="ornament 1"
-        className="absolute top-20 left-0 xl:w-80 lg:w-70 w-48"
+        className="absolute top-16 left-0 xl:w-80 lg:w-70 w-48 "
       />
       <Image
         src={Ornament2}
