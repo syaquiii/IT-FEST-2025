@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const useScrollNavbar = (hideThreshold = 100, showAgainThreshold = 300) => {
+const useScrollNavbar = (hideThreshold: number, showAgainThreshold: number) => {
   const [isVisible, setIsVisible] = useState(true);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
 

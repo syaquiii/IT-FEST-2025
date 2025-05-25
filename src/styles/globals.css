@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin 'tailwind-scrollbar';
 
 @theme {
   --color-ourblack: #383838;
@@ -21,6 +22,7 @@
   --color-blue-300: #3f5daa;
   --color-blue-350: #143861;
   --color-blue-400: #171f74;
+  --color-blue-450: #0a2a4d;
   --color-blue-500: #030d35;
   /* purple */
   --color-purple-100: #c3b8ea;
@@ -44,4 +46,28 @@
 
 .comingsoonbg {
   background: linear-gradient(180deg, #0b0335 29.78%, #19217c 80%), #fff;
+}
+.timelinebg {
+  background: linear-gradient(180deg, #0a2a4d 0%, #092749 100%);
+}
+
+.timelinecontainer {
+  @apply md:px-20 container mx-auto px-4 right-0 left-0;
+}
+
+.specialprizebg {
+  background: linear-gradient(180deg, #092749 0%, #09184d 100%);
+}
+
+.textprizeglow {
+  text-shadow: 0px 0px 39.268px #8872d5;
+}
+.textprizeglowbanget {
+  border-radius: 1919px;
+  background: radial-gradient(46.69% 50% at 50% 50%, #32378e 0%, #091e4c 100%);
+  mix-blend-mode: lighten;
+}
+
+.herocontainer {
+  @apply container right-0 left-0 mx-auto lg:px-8 md:px-28 px-8  xl:px-64;
 }
