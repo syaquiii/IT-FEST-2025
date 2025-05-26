@@ -6,6 +6,8 @@ export const useScrollTrigger = (threshold: number = 0.1) => {
   const ref = useRef(null);
 
   useEffect(() => {
+    const observedElement = ref.current; // Simpan referensi elemen saat efek pertama kali berjalan
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -16,13 +18,13 @@ export const useScrollTrigger = (threshold: number = 0.1) => {
       { threshold }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
+    if (observedElement) {
+      observer.observe(observedElement);
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
+      if (observedElement) {
+        observer.unobserve(observedElement);
       }
     };
   }, [threshold]);

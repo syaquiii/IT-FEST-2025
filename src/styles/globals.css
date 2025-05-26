@@ -85,3 +85,28 @@
   background-image: url("../assets/img/event/eventbg.svg");
   @apply bg-bottom bg-cover;
 }
+
+@keyframes bounce-down {
+  0% {
+    transform: translateY(-20%);
+  }
+  20% {
+    transform: translateY(10%);
+  }
+  40% {
+    transform: translateY(-5%);
+  }
+  60% {
+    transform: translateY(3%);
+  }
+  80% {
+    transform: translateY(-1%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-bounce-down {
+  animation: bounce-down 0.6s ease-out;
+}
