@@ -80,3 +80,8 @@
     #220c47 95.07%
   );
 }
+
+.eventbg {
+  background-image: url("../assets/img/event/eventbg.svg");
+  @apply bg-bottom bg-cover;
+}
