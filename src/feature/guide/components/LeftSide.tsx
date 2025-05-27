@@ -10,6 +10,7 @@ const LeftSide = () => {
       <p className="font-changa w-full text-lg text-center lg:text-left lg:text-xl xl:text-2xl mt-4 text-white xl:w-2/3 ">
         Everything you need to know about the competition, in one place.
       </p>
+
       <Button
         className="mt-10 w-full lg:w-1/2"
         size={"normal"}
