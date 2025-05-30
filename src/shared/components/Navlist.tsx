@@ -9,7 +9,7 @@ interface NavlistProps {
 const Navlist: FC<NavlistProps> = ({ item }) => {
   return (
     <Link
-      className="text-white text-2xl font-bold font-changa"
+      className="text-white text-xl font-bold font-changa"
       href={item.href}
     >
       {item.title}
