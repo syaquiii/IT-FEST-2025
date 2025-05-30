@@ -22,15 +22,15 @@ const Navbar = () => {
     <>
       {/* Desktop Navbar */}
       <nav
-        className={`  fixed right-0 left-0 top-0 py-4 z-20 transition-transform duration-300 ${
+        className={`  fixed right-0 left-0 top-0 py-4 z-100 transition-transform duration-300 ${
           isVisible ? "translate-y-0 lg:bg-blue-500" : "-translate-y-full"
         }`}
       >
         <div className=" mycontainer items-center lg:flex hidden justify-between">
-          <div className="w-1/5 font-robotech text-white text-glow text-6xl font-bold">
+          <div className="w-1/5 font-robotech text-white text-glow text-5xl mb-2 font-bold">
             <h1>IT FEST</h1>
           </div>
-          <ul className="w-3/5 flex justify-center gap-8">
+          <ul className="w-3/5 flex justify-center gap-10">
             {Navlink.map((item) => (
               <Navlist key={item.id} item={item} />
             ))}
