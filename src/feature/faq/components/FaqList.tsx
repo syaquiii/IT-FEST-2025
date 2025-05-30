@@ -19,7 +19,7 @@ const FaqList: FC<FaqListProps> = ({ faq }) => {
         }`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-xl sm:text-2xl md:text-3xl font-bold w-full sm:w-4/5 transition-colors duration-300">
+        <span className="text-xl sm:text-xl md:text-2xl font-bold w-full sm:w-4/5 transition-colors duration-300">
           {faq.question}
         </span>
         <div className="absolute right-4 top-6 sm:static sm:w-1/5 flex items-center justify-end">
