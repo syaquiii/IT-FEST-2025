@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { navItems } from "../data/nav-items";
 import { AdminProfile } from "./AdminProfile";
 import { useState } from "react";
+import SidebarItem from "./SidebarItem";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -63,20 +64,12 @@ export default function Sidebar() {
         <nav>
           <ul className="space-y-6 mt-10 px-6">
             {navItems.map((item, idx) => (
-              <li key={idx}>
-                <Link
-                  href={item.path}
-                  onClick={() => setIsSidebarOpen(false)}
-                  className={cn(
-                    "flex items-center justify-center bg-purple-400 py-4 text-glow font-changa rounded-lg transition-colors",
-                    pathname === item.path
-                      ? "bg-purple-300 text-white"
-                      : "hover:bg-purple-300"
-                  )}
-                >
-                  <span>{item.title}</span>
-                </Link>
-              </li>
+              <SidebarItem
+                key={idx}
+                item={item}
+                pathname={pathname}
+                onItemClick={() => setIsSidebarOpen(false)}
+              />
             ))}
           </ul>
         </nav>
