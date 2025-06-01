@@ -1,7 +1,7 @@
 import React from "react";
 import Hero from "../components/Hero";
-import Pattern from "../components/Pattern";
 import Ornament from "../components/Ornament";
+import Pattern from "@/shared/components/Pattern";
 
 const ComingSoonContainer = () => {
   return (
