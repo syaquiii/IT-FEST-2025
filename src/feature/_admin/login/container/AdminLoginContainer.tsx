@@ -1,6 +1,4 @@
-import Stars from "@/feature/hero/components/Stars";
 import React from "react";
-import Ornament from "../components/Ornament";
 import LoginForm from "../components/LoginForm";
 
 const AdminLoginContainer = () => {
@@ -11,8 +9,6 @@ const AdminLoginContainer = () => {
           <h6 className="">Masuk Sebagai Admin</h6>
         </div>
         <LoginForm />
-        <Stars />
-        <Ornament />
       </div>
     </section>
   );

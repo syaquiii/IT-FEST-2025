@@ -21,8 +21,8 @@ export const AdminProfile: FC<AdminProfileProps> = ({
         />
       </div>
       <div className="flex flex-col font-changa text-white">
-        <span className="font-semibold ">{username}</span>
-        <span className="text-sm font-extralight ">{email}</span>
+        <span className="font-semibold">{username}</span>
+        <span className="text-xs font-extralight">{email}</span>
       </div>
     </div>
   );

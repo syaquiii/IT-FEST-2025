@@ -1,5 +1,5 @@
-import Sidebar from "@/shared/_admin/components/sidebar";
-import Pattern from "@/shared/components/Pattern";
+import { AdminContainer } from "@/shared/_admin/container/AdminContainer";
+import { AuthProvider } from "@/shared/context/AuthContext";
 
 export default function AdminLayout({
   children,
@@ -7,12 +7,8 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen w-full">
-      <Sidebar />
-      <main className="flex-1 relative bg-gradient-to-br from-slate-900 to-violet-950 overflow-hidden min-h-screen w-full">
-        {children}
-        <Pattern />
-      </main>
-    </div>
+    <AuthProvider>
+      <AdminContainer>{children}</AdminContainer>
+    </AuthProvider>
   );
 }
