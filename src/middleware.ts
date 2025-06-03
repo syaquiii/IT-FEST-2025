@@ -10,7 +10,7 @@ const userPaths = ["/dashboard", "/profile"];
 function decryptToken(encryptedToken: string): string | null {
   try {
     const encryptionKey =
-      process.env.ENCRYPTION_KEY || "your-default-encryption-key";
+      process.env.ENCRYPTION_KEY || "mangujoterbaikmagelangan";
     const bytes = CryptoJS.AES.decrypt(encryptedToken, encryptionKey);
     const decryptedToken = bytes.toString(CryptoJS.enc.Utf8);
 
