@@ -26,7 +26,6 @@ export class AuthService {
       if (response.status.isSuccess && response.data) {
         const userInfo = this.decodeToken(response.data.token);
 
-        // Set default role as admin if not present
         if (!userInfo.role) {
           userInfo.role = "admin";
         }
@@ -39,7 +38,8 @@ export class AuthService {
 
         this.setAuthData(authData);
 
-        // Return in expected format
+        window.location.href = "/mangujo/admin/dashboard";
+
         return {
           status: response.status,
           message: response.message,
@@ -57,15 +57,7 @@ export class AuthService {
   }
 
   async logout(): Promise<void> {
-    try {
-      await apiClient.post("/auth/logout");
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error("Logout error:", err.message);
-      }
-    } finally {
-      this.clearAuthData();
-    }
+    this.clearAuthData();
   }
 
   async getCurrentUser(): Promise<User | null> {
@@ -116,7 +108,7 @@ export class AuthService {
       );
 
       const payload: JWTPayload = JSON.parse(jsonPayload);
-
+      // masih hardcoded ke admin
       return {
         id: payload.UserID,
         email: "",
@@ -138,9 +130,8 @@ export class AuthService {
     user: User;
   }): void {
     if (typeof window !== "undefined") {
-      localStorage.setItem("auth_token", authData.token);
-      localStorage.setItem("refresh_token", authData.refreshToken);
-      localStorage.setItem("user_data", JSON.stringify(authData.user));
+      // Use apiClient to set encrypted tokens
+      apiClient.setEncryptedAuthTokens(authData.token, authData.refreshToken);
     }
   }
 
@@ -153,10 +144,8 @@ export class AuthService {
   }
 
   private getStoredToken(): string | null {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("auth_token");
-    }
-    return null;
+    // Use apiClient untuk mengambil token dari local storage atau cookie yang sudah di decrypt
+    return apiClient.getDecryptedToken();
   }
 
   getStoredUser(): User | null {
@@ -192,14 +181,15 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("auth_token");
-      if (!token) return false;
-
       try {
+        const token = apiClient.getDecryptedToken();
+        if (!token) return false;
+
         const payload: JWTPayload = JSON.parse(atob(token.split(".")[1]));
         const currentTime = Math.floor(Date.now() / 1000);
         return payload.exp > currentTime;
-      } catch {
+      } catch (error) {
+        console.error("Authentication check failed:", error);
         return false;
       }
     }
@@ -216,10 +206,20 @@ export class AuthService {
     return user?.permissions?.includes(permission) || false;
   }
 
-  // AMbil User Id by token
+  // Ambil User Id by token
   getUserId(): string | null {
     const user = this.getStoredUser();
     return user?.id || null;
+  }
+
+  // Method untuk mengambil decrypted token untuk API call
+  getTokenForApiCall(): string | null {
+    return apiClient.getDecryptedToken();
+  }
+
+  // Method untuk mengambil decrypted refresh token untuk API call
+  getRefreshTokenForApiCall(): string | null {
+    return apiClient.getDecryptedRefreshToken();
   }
 }
 
