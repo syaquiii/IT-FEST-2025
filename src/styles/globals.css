@@ -114,3 +114,6 @@
 .guidebg {
   background: linear-gradient(180deg, #0f164c 0%, #1c073c 100%);
 }
+.loading-spinner {
+  @apply border-4 rounded-full w-12 h-12 border-purple-100 border-t-blue-300 animate-spin mx-auto;
+}
