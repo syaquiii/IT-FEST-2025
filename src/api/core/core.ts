@@ -1,5 +1,6 @@
 import { ApiResponse } from "@/shared/type/TAuth";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import CryptoJS from "crypto-js";
 
 interface RefreshTokenResponse {
   status: {
@@ -14,6 +15,8 @@ interface RefreshTokenResponse {
 class Core {
   private client: AxiosInstance;
   private static instance: Core;
+  private readonly encryptionKey =
+    process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "your-default-encryption-key";
 
   private constructor() {
     this.client = axios.create({
@@ -32,6 +35,33 @@ class Core {
       Core.instance = new Core();
     }
     return Core.instance;
+  }
+
+  // Encrypt token before storing
+  private encryptToken(token: string): string {
+    try {
+      return CryptoJS.AES.encrypt(token, this.encryptionKey).toString();
+    } catch (error) {
+      console.error("Token encryption failed:", error);
+      throw new Error("Token encryption failed");
+    }
+  }
+
+  // Decrypt token when retrieving
+  private decryptToken(encryptedToken: string): string {
+    try {
+      const bytes = CryptoJS.AES.decrypt(encryptedToken, this.encryptionKey);
+      const decryptedToken = bytes.toString(CryptoJS.enc.Utf8);
+
+      if (!decryptedToken) {
+        throw new Error("Failed to decrypt token");
+      }
+
+      return decryptedToken;
+    } catch (error) {
+      console.error("Token decryption failed:", error);
+      throw new Error("Token decryption failed");
+    }
   }
 
   private setupInterceptors(): void {
@@ -82,16 +112,38 @@ class Core {
 
   private getAuthToken(): string | null {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("auth_token");
+      const encryptedToken = localStorage.getItem("auth_token");
+      if (encryptedToken) {
+        try {
+          return this.decryptToken(encryptedToken);
+        } catch (error) {
+          console.error("Failed to decrypt stored token:", error);
+          // Clear invalid token
+          this.handleAuthError();
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  private getRefreshToken(): string | null {
+    if (typeof window !== "undefined") {
+      const encryptedRefreshToken = localStorage.getItem("refresh_token");
+      if (encryptedRefreshToken) {
+        try {
+          return this.decryptToken(encryptedRefreshToken);
+        } catch (error) {
+          console.error("Failed to decrypt stored refresh token:", error);
+          return null;
+        }
+      }
     }
     return null;
   }
 
   private async refreshToken(): Promise<void> {
-    const refreshToken =
-      typeof window !== "undefined"
-        ? localStorage.getItem("refresh_token")
-        : null;
+    const refreshToken = this.getRefreshToken();
 
     if (!refreshToken) {
       throw new Error("No refresh token available");
@@ -114,8 +166,17 @@ class Core {
 
   private setAuthTokens(token: string, refreshToken: string): void {
     if (typeof window !== "undefined") {
-      localStorage.setItem("auth_token", token);
-      localStorage.setItem("refresh_token", refreshToken);
+      try {
+        // Encrypt tokens before storing
+        const encryptedToken = this.encryptToken(token);
+        const encryptedRefreshToken = this.encryptToken(refreshToken);
+
+        localStorage.setItem("auth_token", encryptedToken);
+        localStorage.setItem("refresh_token", encryptedRefreshToken);
+      } catch (error) {
+        console.error("Failed to encrypt and store tokens:", error);
+        throw new Error("Failed to store authentication tokens");
+      }
     }
   }
 
@@ -126,6 +187,18 @@ class Core {
       localStorage.removeItem("user_data");
       window.location.href = "/login";
     }
+  }
+
+  public getDecryptedToken(): string | null {
+    return this.getAuthToken();
+  }
+
+  public getDecryptedRefreshToken(): string | null {
+    return this.getRefreshToken();
+  }
+
+  public setEncryptedAuthTokens(token: string, refreshToken: string): void {
+    this.setAuthTokens(token, refreshToken);
   }
 
   public async get<T>(

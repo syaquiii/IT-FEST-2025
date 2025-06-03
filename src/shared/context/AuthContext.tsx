@@ -78,12 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       setUser(userData || null);
-
-      console.log("Login successful:", {
-        isAuth: authService.isAuthenticated(),
-        user: userData,
-        role: userData?.role,
-      });
     } catch (error) {
       console.error("Login error:", error);
       setUser(null);
@@ -117,7 +111,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated,
     hasRole: (role: string) => {
       const hasRole = Boolean(user?.role === role);
-      console.log(`Checking role ${role}:`, { userRole: user?.role, hasRole });
       return hasRole;
     },
     hasPermission: (permission: string) => {
