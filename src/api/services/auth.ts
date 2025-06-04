@@ -32,8 +32,6 @@ export class AuthService {
 
         this.setAuthData(authData);
 
-        window.location.href = "/mangujo/admin/dashboard";
-
         return {
           status: response.status,
           message: response.message,
