@@ -13,6 +13,8 @@ interface AuthContextType {
   hasRole: (role: string) => boolean;
   hasPermission: (permission: string) => boolean;
   IsAdmin: boolean;
+  getUserId: () => string | null;
+  refreshUser: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -29,10 +31,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function initializeAuth() {
     try {
-      const storedUser = authService.getStoredUser();
       const isAuth = authService.isAuthenticated();
 
-      if (storedUser && isAuth) {
+      if (!isAuth) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      const storedUser = authService.getStoredUser();
+
+      if (storedUser) {
         setUser(storedUser);
 
         try {
@@ -42,10 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } catch (error) {
           console.error("Error fetching current user:", error);
-          // Still use stored user if API call fails
-          setUser(storedUser);
         }
       } else {
+        await authService.logout();
         setUser(null);
       }
     } catch (error) {
@@ -54,6 +62,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function refreshUser() {
+    try {
+      const currentUser = await authService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        const storedUser = authService.getStoredUser();
+        setUser(storedUser);
+      }
+    } catch (error) {
+      console.error("Error refreshing user:", error);
+      const storedUser = authService.getStoredUser();
+      setUser(storedUser);
     }
   }
 
@@ -84,17 +108,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await authService.logout();
       setUser(null);
+      if (typeof window !== "undefined") {
+        window.location.href = "/home";
+      }
     } catch (error) {
       console.error("Logout error:", error);
       setUser(null);
-      throw error;
     } finally {
       setLoading(false);
     }
   }
 
-  const isAuthenticated = !!user && authService.isAuthenticated();
-  const IsAdmin = user?.IsAdmin || false;
+  const isAuthenticated = authService.isAuthenticated() && !!user;
+  const IsAdmin = authService.IsAdmin();
 
   const value: AuthContextType = {
     user,
@@ -103,8 +129,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     isAuthenticated,
     IsAdmin,
+    getUserId: () => authService.getUserId(),
+    refreshUser,
     hasRole: (role: string) => {
-      return Boolean(user?.role === role);
+      return authService.hasRole(role);
     },
     hasPermission: (permission: string) => {
       return Boolean(user?.permissions?.includes(permission));

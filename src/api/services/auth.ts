@@ -215,7 +215,6 @@ export class AuthService {
   getTokenForApiCall(): string | null {
     return apiClient.getDecryptedToken();
   }
-
 }
 
 export const authService = AuthService.getInstance();

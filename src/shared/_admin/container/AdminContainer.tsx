@@ -3,7 +3,7 @@ import { ProtectedRoute } from "@/shared/components/protected/ProtectedRoutes";
 import Sidebar from "../components/sidebar";
 import Pattern from "@/shared/components/Pattern";
 import { useAuth } from "@/shared/hooks/useAuth";
-
+import ImageAdmin from "@/assets/img/_admin/rusdi.webp";
 interface AdminContainerProps {
   children: React.ReactNode;
   className?: string;
@@ -16,13 +16,13 @@ export function AdminContainer({
   const { user, logout } = useAuth();
 
   const profileData = {
-    imageUrl: user?.name || "/default-avatar.png",
+    imageUrl: user?.name || ImageAdmin.src,
     username: user?.name || user?.email?.split("@")[0] || "Admin",
     email: user?.email || "",
   };
 
   return (
-    <ProtectedRoute requiredRole="admin">
+    <ProtectedRoute requireAdmin>
       <div className="flex min-h-screen w-full bg-gradient-to-br from-slate-900 to-violet-950">
         <Sidebar onLogout={logout} profileData={profileData} />
         <main

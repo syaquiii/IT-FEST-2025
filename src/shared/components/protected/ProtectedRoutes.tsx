@@ -1,69 +1,60 @@
 "use client";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiredRole?: string;
   requiredPermission?: string;
+  requireAdmin?: boolean;
+  userOnly?: boolean; // New prop to restrict admin access
   fallbackPath?: string;
 }
 
 export function ProtectedRoute({
   children,
-  requiredRole,
-  requiredPermission,
+  requireAdmin = false,
+  userOnly = false,
   fallbackPath = "/login",
 }: ProtectedRouteProps) {
-  const { loading, isAuthenticated, hasRole, hasPermission } = useAuth();
+  const { loading, isAuthenticated, IsAdmin } = useAuth();
   const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (!loading) {
       if (!isAuthenticated) {
+        setIsAuthorized(false);
         router.push(fallbackPath);
         return;
       }
 
-      if (requiredRole && !hasRole(requiredRole)) {
+      if (userOnly && IsAdmin) {
+        setIsAuthorized(false);
+        router.push("/mangujo/admin/dashboard");
+        return;
+      }
+
+      if (requireAdmin && !IsAdmin) {
+        setIsAuthorized(false);
         router.push("/unauthorized");
         return;
       }
 
-      if (requiredPermission && !hasPermission(requiredPermission)) {
-        router.push("/unauthorized");
-        return;
-      }
+      setIsAuthorized(true);
     }
-  }, [
-    loading,
-    isAuthenticated,
-    requiredRole,
-    requiredPermission,
-    router,
-    fallbackPath,
-    hasRole,
-    hasPermission,
-  ]);
+  }, [loading, isAuthenticated, IsAdmin, requireAdmin, userOnly, fallbackPath]);
 
-  if (loading) {
+  if (loading || isAuthorized === null) {
     return (
       <div className="flex items-center justify-center h-screen bg-[#030d35]">
-        <div className="loading-spinner"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
       </div>
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  if (requiredRole && !hasRole(requiredRole)) {
-    return null;
-  }
-
-  if (requiredPermission && !hasPermission(requiredPermission)) {
+  if (!isAuthorized) {
     return null;
   }
 
