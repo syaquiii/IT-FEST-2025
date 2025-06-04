@@ -10,6 +10,7 @@ export interface User {
   permissions?: string[];
   createdAt?: string;
   updatedAt?: string;
+  IsAdmin?: boolean;
 }
 export interface ApiStatus {
   code: number;
@@ -20,7 +21,6 @@ export interface AuthResponse {
   message: string;
   data: {
     token: string;
-    refreshToken?: string;
     user?: User;
   };
 }
@@ -38,6 +38,7 @@ export interface JWTPayload {
   UserID: string;
   role?: string;
   email?: string;
+  IsAdmin?: boolean;
   name?: string;
   permissions?: string[];
   exp: number;
