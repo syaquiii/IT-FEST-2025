@@ -1,84 +1,29 @@
-"use client";
-
-import React from "react";
-import { Input } from "@/shared/components/ui/Input";
 import { Button } from "@/shared/components/ui/Button";
-import { useAuth } from "@/shared/hooks/useAuth";
+import { Input } from "@/shared/components/ui/Input";
 
-interface FormState {
+interface LoginFormProps {
   email: string;
   password: string;
   error: string;
+  loading: boolean;
+  isAuthenticated: boolean;
+  setEmail: (email: string) => void;
+  setPassword: (password: string) => void;
+  handleSubmit: (e: React.FormEvent) => void;
+  logout: () => void;
 }
 
-interface LoginError extends Error {
-  message: string;
-}
-
-const LoginForm = () => {
-  const [formState, setFormState] = React.useState<FormState>({
-    email: "",
-    password: "",
-    error: "",
-  });
-
-  const { login, loading, user, isAuthenticated, logout } = useAuth();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormState((prev) => ({ ...prev, error: "" }));
-
-    if (!formState.email || !formState.password) {
-      setFormState((prev) => ({ ...prev, error: "Please fill in all fields" }));
-      return;
-    }
-
-    if (!formState.email.includes("@")) {
-      setFormState((prev) => ({
-        ...prev,
-        error: "Please enter a valid email address",
-      }));
-      return;
-    }
-
-    try {
-      await login(formState.email, formState.password);
-      setFormState((prev) => ({
-        ...prev,
-        email: "",
-        password: "",
-      }));
-    } catch (error) {
-      const loginError = error as LoginError;
-      const errorMsg = loginError.message || "Login failed. Please try again.";
-      setFormState((prev) => ({ ...prev, error: errorMsg }));
-    }
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value;
-    setFormState((prev) => ({
-      ...prev,
-      email: newEmail,
-      error: "",
-    }));
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPassword = e.target.value;
-    setFormState((prev) => ({
-      ...prev,
-      password: newPassword,
-      error: "",
-    }));
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch {}
-  };
-
+const LoginForm: React.FC<LoginFormProps> = ({
+  email,
+  password,
+  error,
+  loading,
+  isAuthenticated,
+  setEmail,
+  setPassword,
+  handleSubmit,
+  logout,
+}) => {
   return (
     <div>
       <form
@@ -86,17 +31,10 @@ const LoginForm = () => {
         className="w-full max-w-md mx-auto min-h-[20rem] p-4 sm:p-6 md:p-8 text-white font-changa bg-blue-400 rounded-2xl sm:rounded-3xl border-2 border-purple-300 relative"
       >
         <div className="space-y-3 sm:space-y-4">
-          {formState.error && (
+          {error && (
             <div className="text-red-200 text-sm bg-red-500/20 p-3 rounded border border-red-300/20">
               <div className="font-semibold">❌ Error:</div>
-              {formState.error}
-            </div>
-          )}
-
-          {isAuthenticated && user && (
-            <div className="text-green-200 text-sm bg-green-500/20 p-3 rounded border border-green-300/20">
-              <div className="font-semibold">✅ Success:</div>
-              Welcome, {user.id}! You are now logged in.
+              {error}
             </div>
           )}
 
@@ -104,8 +42,8 @@ const LoginForm = () => {
             label="Email"
             type="email"
             placeholder="Enter your email"
-            value={formState.email}
-            onChange={handleEmailChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
             disabled={loading}
             className="text-sm sm:text-base"
@@ -115,8 +53,8 @@ const LoginForm = () => {
             label="Password"
             type="password"
             placeholder="Enter your password"
-            value={formState.password}
-            onChange={handlePasswordChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
             disabled={loading}
             className="text-sm sm:text-base"
@@ -131,12 +69,7 @@ const LoginForm = () => {
             <Button
               type="submit"
               size={"small"}
-              disabled={
-                loading ||
-                !formState.email ||
-                !formState.password ||
-                isAuthenticated
-              }
+              disabled={loading || !email || !password || isAuthenticated}
               className="w-full text-sm sm:text-base disabled:opacity-50"
             >
               {loading
@@ -151,7 +84,7 @@ const LoginForm = () => {
             <div className="pt-2">
               <Button
                 type="button"
-                onClick={handleLogout}
+                onClick={logout}
                 size={"small"}
                 disabled={loading}
                 className="w-full text-sm sm:text-base bg-red-500 hover:bg-red-600"
