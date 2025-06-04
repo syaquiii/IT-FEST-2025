@@ -1,5 +1,4 @@
 "use client";
-// ini buat ngewrapped komponent Protected
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

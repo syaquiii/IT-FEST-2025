@@ -20,19 +20,13 @@ export class AuthService {
     try {
       const response = await apiClient.post<{
         token: string;
-        refreshToken?: string;
       }>("/auth/login", credentials);
 
       if (response.status.isSuccess && response.data) {
         const userInfo = this.decodeToken(response.data.token);
 
-        if (!userInfo.role) {
-          userInfo.role = "admin";
-        }
-
         const authData = {
           token: response.data.token,
-          refreshToken: response.data.refreshToken || "",
           user: userInfo,
         };
 
@@ -64,13 +58,22 @@ export class AuthService {
     try {
       const response = await apiClient.get<User>("/users/profile");
       if (response.status.isSuccess && response.data) {
-        // Ensure admin role is set if not present from API
-        if (!response.data.role) {
-          response.data.role = "admin";
+        const token = this.getStoredToken();
+        if (token) {
+          const tokenData = this.decodeToken(token);
+          // Merge API response with token data
+          return {
+            ...response.data,
+            role: tokenData.role,
+            IsAdmin: tokenData.IsAdmin,
+            id: tokenData.id,
+            permissions: tokenData.permissions,
+          };
         }
         return response.data;
       }
 
+      // Fallback to token data only
       const token = this.getStoredToken();
       if (token) {
         return this.decodeToken(token);
@@ -81,6 +84,7 @@ export class AuthService {
       if (err instanceof Error) {
         console.error("Get current user error:", err.message);
       }
+      // Always fallback to token data
       const token = this.getStoredToken();
       if (token) {
         try {
@@ -108,13 +112,17 @@ export class AuthService {
       );
 
       const payload: JWTPayload = JSON.parse(jsonPayload);
-      // masih hardcoded ke admin
+
+      const IsAdmin = payload.IsAdmin;
+      const role = IsAdmin === true ? "admin" : "user";
+
       return {
         id: payload.UserID,
-        email: "",
-        name: "",
-        role: payload.role || "admin",
-        permissions: payload.permissions || [],
+        email: "", // Empty since not in token
+        name: "", // Empty since not in token
+        role: role,
+        IsAdmin: IsAdmin,
+        permissions: [], // Empty since not in token
       };
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -124,14 +132,9 @@ export class AuthService {
     }
   }
 
-  private setAuthData(authData: {
-    token: string;
-    refreshToken: string;
-    user: User;
-  }): void {
+  private setAuthData(authData: { token: string; user: User }): void {
     if (typeof window !== "undefined") {
-      // Use apiClient to set encrypted tokens
-      apiClient.setEncryptedAuthTokens(authData.token, authData.refreshToken);
+      apiClient.setEncryptedAuthTokens(authData.token);
     }
   }
 
@@ -139,7 +142,6 @@ export class AuthService {
     if (typeof window !== "undefined") {
       localStorage.removeItem("auth_token");
       localStorage.removeItem("refresh_token");
-      localStorage.removeItem("user_data");
     }
   }
 
@@ -149,31 +151,13 @@ export class AuthService {
   }
 
   getStoredUser(): User | null {
-    if (typeof window !== "undefined") {
-      const userData = localStorage.getItem("user_data");
-      if (userData) {
-        try {
-          const user = JSON.parse(userData) as User;
-          if (!user.role) {
-            user.role = "admin";
-            localStorage.setItem("user_data", JSON.stringify(user));
-          }
-          return user;
-        } catch (err: unknown) {
-          if (err instanceof Error) {
-            console.error("Error parsing stored user data:", err.message);
-          }
-          return null;
-        }
-      }
-
-      const token = this.getStoredToken();
-      if (token) {
-        try {
-          return this.decodeToken(token);
-        } catch {
-          return null;
-        }
+    // Always get user data from token, never from localStorage
+    const token = this.getStoredToken();
+    if (token) {
+      try {
+        return this.decodeToken(token);
+      } catch {
+        return null;
       }
     }
     return null;
@@ -201,15 +185,30 @@ export class AuthService {
     return user?.role === requiredRole;
   }
 
-  hasPermission(permission: string): boolean {
-    const user = this.getStoredUser();
-    return user?.permissions?.includes(permission) || false;
+  // Method to check admin status directly from token
+  IsAdmin(): boolean {
+    const token = this.getStoredToken();
+    if (!token) return false;
+
+    try {
+      const payload: JWTPayload = JSON.parse(atob(token.split(".")[1]));
+      return payload.IsAdmin === true;
+    } catch {
+      return false;
+    }
   }
 
   // Ambil User Id by token
   getUserId(): string | null {
-    const user = this.getStoredUser();
-    return user?.id || null;
+    const token = this.getStoredToken();
+    if (!token) return null;
+
+    try {
+      const payload: JWTPayload = JSON.parse(atob(token.split(".")[1]));
+      return payload.UserID || null;
+    } catch {
+      return null;
+    }
   }
 
   // Method untuk mengambil decrypted token untuk API call
@@ -217,10 +216,6 @@ export class AuthService {
     return apiClient.getDecryptedToken();
   }
 
-  // Method untuk mengambil decrypted refresh token untuk API call
-  getRefreshTokenForApiCall(): string | null {
-    return apiClient.getDecryptedRefreshToken();
-  }
 }
 
 export const authService = AuthService.getInstance();

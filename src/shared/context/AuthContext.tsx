@@ -12,6 +12,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   hasRole: (role: string) => boolean;
   hasPermission: (permission: string) => boolean;
+  IsAdmin: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -32,22 +33,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const isAuth = authService.isAuthenticated();
 
       if (storedUser && isAuth) {
-        if (!storedUser.role) {
-          storedUser.role = "admin";
-        }
         setUser(storedUser);
 
         try {
           const currentUser = await authService.getCurrentUser();
           if (currentUser) {
-            // Masih hardcoded admin karena belum ada role di api
-            if (!currentUser.role) {
-              currentUser.role = "admin";
-            }
             setUser(currentUser);
           }
         } catch (error) {
           console.error("Error fetching current user:", error);
+          // Still use stored user if API call fails
+          setUser(storedUser);
         }
       } else {
         setUser(null);
@@ -73,10 +69,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const userData = response.data.user;
-      if (userData && !userData.role) {
-        userData.role = "admin";
-      }
-
       setUser(userData || null);
     } catch (error) {
       console.error("Login error:", error);
@@ -102,6 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const isAuthenticated = !!user && authService.isAuthenticated();
+  const IsAdmin = user?.IsAdmin || false;
 
   const value: AuthContextType = {
     user,
@@ -109,13 +102,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login,
     logout,
     isAuthenticated,
+    IsAdmin,
     hasRole: (role: string) => {
-      const hasRole = Boolean(user?.role === role);
-      return hasRole;
+      return Boolean(user?.role === role);
     },
     hasPermission: (permission: string) => {
-      const hasPermission = Boolean(user?.permissions?.includes(permission));
-      return hasPermission;
+      return Boolean(user?.permissions?.includes(permission));
     },
   };
 

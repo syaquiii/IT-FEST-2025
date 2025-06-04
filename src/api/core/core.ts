@@ -2,15 +2,6 @@ import { ApiResponse } from "@/shared/type/TAuth";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import CryptoJS from "crypto-js";
 
-interface RefreshTokenResponse {
-  status: {
-    isSuccess: boolean;
-  };
-  data: {
-    token: string;
-    refreshToken?: string;
-  };
-}
 
 class Core {
   private client: AxiosInstance;
@@ -93,7 +84,6 @@ class Core {
           originalRequest._retry = true;
 
           try {
-            await this.refreshToken();
             const newToken = this.getAuthToken();
             if (newToken) {
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -127,52 +117,13 @@ class Core {
     return null;
   }
 
-  private getRefreshToken(): string | null {
-    if (typeof window !== "undefined") {
-      const encryptedRefreshToken = localStorage.getItem("refresh_token");
-      if (encryptedRefreshToken) {
-        try {
-          return this.decryptToken(encryptedRefreshToken);
-        } catch (error) {
-          console.error("Failed to decrypt stored refresh token:", error);
-          return null;
-        }
-      }
-    }
-    return null;
-  }
-
-  private async refreshToken(): Promise<void> {
-    const refreshToken = this.getRefreshToken();
-
-    if (!refreshToken) {
-      throw new Error("No refresh token available");
-    }
-
-    const response = await this.client.post<RefreshTokenResponse>(
-      "/auth/refresh",
-      {
-        refreshToken,
-      }
-    );
-
-    if (response.data.status.isSuccess) {
-      this.setAuthTokens(
-        response.data.data.token,
-        response.data.data.refreshToken || refreshToken
-      );
-    }
-  }
-
-  private setAuthTokens(token: string, refreshToken: string): void {
+  private setAuthTokens(token: string): void {
     if (typeof window !== "undefined") {
       try {
         // Encrypt tokens before storing
         const encryptedToken = this.encryptToken(token);
-        const encryptedRefreshToken = this.encryptToken(refreshToken);
 
         localStorage.setItem("auth_token", encryptedToken);
-        localStorage.setItem("refresh_token", encryptedRefreshToken);
       } catch (error) {
         console.error("Failed to encrypt and store tokens:", error);
         throw new Error("Failed to store authentication tokens");
@@ -193,12 +144,8 @@ class Core {
     return this.getAuthToken();
   }
 
-  public getDecryptedRefreshToken(): string | null {
-    return this.getRefreshToken();
-  }
-
-  public setEncryptedAuthTokens(token: string, refreshToken: string): void {
-    this.setAuthTokens(token, refreshToken);
+  public setEncryptedAuthTokens(token: string): void {
+    this.setAuthTokens(token);
   }
 
   public async get<T>(
