@@ -121,7 +121,6 @@ class Core {
       try {
         // Encrypt tokens before storing
         const encryptedToken = this.encryptToken(token);
-
         localStorage.setItem("auth_token", encryptedToken);
       } catch (error) {
         console.error("Failed to encrypt and store tokens:", error);
