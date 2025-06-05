@@ -2,12 +2,11 @@ import { ApiResponse } from "@/shared/type/TAuth";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import CryptoJS from "crypto-js";
 
-
 class Core {
   private client: AxiosInstance;
   private static instance: Core;
   private readonly encryptionKey =
-    process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "your-default-encryption-key";
+    process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "mangujoterbaik";
 
   private constructor() {
     this.client = axios.create({
