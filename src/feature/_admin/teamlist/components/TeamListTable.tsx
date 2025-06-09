@@ -3,21 +3,30 @@ import React from "react";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
     TableFooter,
 } from "@/components/ui/table"
-import { teamList } from "@/feature/_admin/teamlist/data/useTeamData";
 import { getPaymentStatusStyle } from "@/shared/utils/paymentStyles";
+import { TeamDetailsData } from "@/api/services/admin";
 
-interface TotalTeamsCardProps {
+
+interface TeamListTableProps {
     totalAll: number;
+    teamData: TeamDetailsData[] | null;
 }
 
-const TeamListTable = ({ totalAll }: TotalTeamsCardProps) => {
+const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
+    if (!teamData) {
+        return <div>Loading...</div>;
+    }
+
+    if (teamData.length === 0) {
+        return <div>No teams found.</div>;
+    }
+
     return (
         <Table>
             <TableHeader>
@@ -30,17 +39,17 @@ const TeamListTable = ({ totalAll }: TotalTeamsCardProps) => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {teamList.map((teamList) => (
-                    <TableRow key={teamList.id}>
-                        <TableCell className="font-medium">{teamList.team_name}</TableCell>
-                        <TableCell className="font-medium">{teamList.leader_name}</TableCell>
-                        <TableCell>{teamList.university}</TableCell>
+                {teamData.map((teamData) => (
+                    <TableRow>
+                        <TableCell className="font-medium">{teamData.team_name}</TableCell>
+                        <TableCell className="font-medium">{teamData.leader_name}</TableCell>
+                        <TableCell>{teamData.university}</TableCell>
                         <TableCell>
-                            <span className={getPaymentStatusStyle(teamList.payment_status)}>
-                                {teamList.payment_status}
+                            <span className={getPaymentStatusStyle(teamData.payment_status)}>
+                                {teamData.payment_status}
                             </span>
                         </TableCell>
-                        <TableCell>{teamList.competition_name}</TableCell>
+                        <TableCell>{teamData.competition_name}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
