@@ -23,6 +23,8 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
         return <div>Loading...</div>;
     }
 
+    const validTeams = teamData.filter(team => team.team_name && team.team_name.trim() !== "");
+
     if (teamData.length === 0) {
         return <div>No teams found.</div>;
     }
@@ -39,17 +41,17 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {teamData.map((teamData) => (
-                    <TableRow>
-                        <TableCell className="font-medium">{teamData.team_name}</TableCell>
-                        <TableCell className="font-medium">{teamData.leader_name}</TableCell>
-                        <TableCell>{teamData.university}</TableCell>
+                {validTeams.map((team, index) => (
+                    <TableRow key={index}>
+                        <TableCell className="font-medium">{team.team_name}</TableCell>
+                        <TableCell className="font-medium">{team.leader_name}</TableCell>
+                        <TableCell>{team.university}</TableCell>
                         <TableCell>
-                            <span className={getPaymentStatusStyle(teamData.payment_status)}>
-                                {teamData.payment_status}
+                            <span className={getPaymentStatusStyle(team.payment_status)}>
+                                {team.payment_status}
                             </span>
                         </TableCell>
-                        <TableCell>{teamData.competition_name}</TableCell>
+                        <TableCell>{team.competition_name}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
