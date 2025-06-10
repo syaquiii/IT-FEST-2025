@@ -1,7 +1,12 @@
 import React from "react";
+import TeamListContainer from "@/feature/_admin/teamlist/container/TeamListContainer";
 
 const page = () => {
-  return <div className="text-white p-20">HEHE HAHA TEAM LIST</div>;
+  return (
+    <main>
+      <TeamListContainer/>
+    </main>
+  );
 };
 
 export default page;

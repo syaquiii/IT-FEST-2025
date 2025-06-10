@@ -5,6 +5,19 @@ export interface ParticipantTotalData {
   total_bp: number;
 }
 
+export interface TeamDetailsData {
+    team_name: string;
+    leader_name: string;
+    university: string;
+    payment_status: string;
+    competition_name: string;
+    team_members: TeamMember[];
+}
+
+export interface TeamMember {
+    name: string;
+}
+
 export interface ParticipantTotalResponse {
   status: {
     code: number;
@@ -12,6 +25,15 @@ export interface ParticipantTotalResponse {
   };
   message: string;
   data: ParticipantTotalData;
+}
+
+export interface TeamDetailsResponse {
+  status: {
+    code: number;
+    isSuccess: boolean;
+  };
+  message: string;
+  data: TeamDetailsData[];
 }
 
 export class ParticipantService {
@@ -84,6 +106,30 @@ export class ParticipantService {
         console.error("Get total all participants error:", err.message);
       }
       return 0;
+    }
+  }
+
+  async getTeamDetails(): Promise<TeamDetailsResponse> {
+    try {
+      const response = await apiClient.get<TeamDetailsData[]>(  // Changed to array
+        "/admin/teams"
+      );
+
+      if (response.status.isSuccess && response.data) {
+        return {
+          status: response.status,
+          message: response.message,
+          data: response.data,  // Now returns array of teams
+        };
+      }
+
+      return response as TeamDetailsResponse;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Get teams error:", err.message);
+        throw new Error(err.message || "Failed to get teams");
+      }
+      throw new Error("Failed to get teams");
     }
   }
 }
