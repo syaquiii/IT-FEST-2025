@@ -36,8 +36,8 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
                     <TableHead>Team Name</TableHead>
                     <TableHead>Leader Name</TableHead>
                     <TableHead>University</TableHead>
-                    <TableHead>Payment Status</TableHead>
-                    <TableHead>Competition</TableHead>
+                    {/* <TableHead>Payment Status</TableHead>
+                    <TableHead>Competition</TableHead> */}
                 </TableRow>
             </TableHeader>
             <TableBody>
