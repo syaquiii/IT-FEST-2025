@@ -1,3 +1,4 @@
+import { BlobResponse } from "@/shared/type/TAuth";
 import { apiClient } from "../core/core";
 
 export interface ParticipantTotalData {
@@ -6,16 +7,16 @@ export interface ParticipantTotalData {
 }
 
 export interface TeamDetailsData {
-    team_name: string;
-    leader_name: string;
-    university: string;
-    payment_status: string;
-    competition_name: string;
-    team_members: TeamMember[];
+  team_name: string;
+  leader_name: string;
+  university: string;
+  payment_status: string;
+  competition_name: string;
+  team_members: TeamMember[];
 }
 
 export interface TeamMember {
-    name: string;
+  name: string;
 }
 
 export interface ParticipantTotalResponse {
@@ -34,6 +35,15 @@ export interface TeamDetailsResponse {
   };
   message: string;
   data: TeamDetailsData[];
+}
+
+export interface FileDownloadResponse {
+  status: {
+    code: number;
+    isSuccess: boolean;
+  };
+  message: string;
+  data: any;
 }
 
 export class ParticipantService {
@@ -111,7 +121,7 @@ export class ParticipantService {
 
   async getTeamDetails(): Promise<TeamDetailsResponse> {
     try {
-      const response = await apiClient.get<TeamDetailsData[]>(  // Changed to array
+      const response = await apiClient.get<TeamDetailsData[]>( 
         "/admin/teams"
       );
 
@@ -119,7 +129,7 @@ export class ParticipantService {
         return {
           status: response.status,
           message: response.message,
-          data: response.data,  // Now returns array of teams
+          data: response.data, 
         };
       }
 
@@ -135,3 +145,57 @@ export class ParticipantService {
 }
 
 export const participantService = ParticipantService.getInstance();
+
+
+export class ExcelService {
+  private static instance: ExcelService;
+
+  public static getInstance(): ExcelService {
+    if (!ExcelService.instance) {
+      ExcelService.instance = new ExcelService();
+    }
+    return ExcelService.instance;
+  }
+
+  async downloadPaymentData(): Promise<BlobResponse> {
+    try {
+      const response = await apiClient.getBlob("/admin/excel/data-payment");
+
+      if (!(response.data instanceof Blob)) {
+        console.error("Invalid response format: Expected a Blob but received", typeof response.data);
+        throw new Error("The server response was not a valid file.");
+      }
+      
+      return response;
+
+    } catch (err: unknown) {
+      console.error("Download payment data error:", err);
+      if (err instanceof Error) {
+        throw new Error(`Download failed: ${err.message}`);
+      }
+      throw new Error("An unknown error occurred while downloading the file.");
+    }
+  }
+
+  async downloadTeamsData(): Promise<BlobResponse> {
+    try {
+      const response = await apiClient.getBlob("/admin/excel/data-team");
+
+      if (!(response.data instanceof Blob)) {
+        console.error("Invalid response format: Expected a Blob but received", typeof response.data);
+        throw new Error("The server response was not a valid file.");
+      }
+      
+      return response;
+
+    } catch (err: unknown) {
+      console.error("Download payment data error:", err);
+      if (err instanceof Error) {
+        throw new Error(`Download failed: ${err.message}`);
+      }
+      throw new Error("An unknown error occurred while downloading the file.");
+    }
+  }
+}
+
+export const excelService = ExcelService.getInstance();
