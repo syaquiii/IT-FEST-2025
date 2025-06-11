@@ -1,13 +1,21 @@
 "use client";
 import { cn } from "@/shared/utils/cn";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { navItems } from "../data/nav-items";
 import { AdminProfile } from "./AdminProfile";
 import { useState } from "react";
 import SidebarItem from "./SidebarItem";
 
-export default function Sidebar() {
+interface SidebarProps {
+  profileData: {
+    imageUrl: string;
+    username: string;
+    email: string;
+  };
+  onLogout: () => void;
+}
+
+export default function Sidebar({ profileData, onLogout }: SidebarProps) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -51,15 +59,15 @@ export default function Sidebar() {
 
       <aside
         className={cn(
-          "fixed md:static w-64 h-screen bg-blue-400 text-white p-4 flex flex-col z-50 transition-transform duration-300 ease-in-out",
+          "fixed md:static w-64 min-h-screen bg-blue-400 text-white p-4 flex flex-col z-50 transition-transform duration-300 ease-in-out",
           "md:transform-none",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
         <AdminProfile
-          imageUrl="#"
-          email="dummy@mail.com"
-          username="admin mangujo"
+          imageUrl={profileData.imageUrl}
+          email={profileData.email}
+          username={profileData.username}
         />
         <nav>
           <ul className="space-y-6 mt-10 px-6">
@@ -73,13 +81,15 @@ export default function Sidebar() {
             ))}
           </ul>
         </nav>
-        <Link
-          href="/"
-          onClick={() => setIsSidebarOpen(false)}
-          className="mt-auto flex items-center justify-center font-bold px-4 py-2 text-red-600 transition-colors"
+        <button
+          onClick={() => {
+            setIsSidebarOpen(false);
+            onLogout();
+          }}
+          className="mt-auto flex items-center justify-center font-bold px-4 py-2 text-red-600 transition-colors hover:bg-red-100"
         >
           <span>Logout</span>
-        </Link>
+        </button>
       </aside>
     </>
   );

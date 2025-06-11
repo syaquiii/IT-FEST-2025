@@ -1,7 +1,12 @@
 import React from "react";
+import AnnouncementContainer from "@/feature/_admin/annoucement/container/AnnouncementContainer";
 
 const page = () => {
-  return <div className="text-white p-20">HEHE HAHA ANNOUCEMENT</div>;
+  return (
+    <main>
+      <AnnouncementContainer />
+    </main>
+  );
 };
 
 export default page;
