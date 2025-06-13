@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/shared/type/TAuth";
+import { ApiResponse, BlobResponse } from "@/shared/type/TAuth";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import CryptoJS from "crypto-js";
 
@@ -61,6 +61,11 @@ class Core {
 
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        // Handle blob requests
+        if (config.responseType === 'blob') {
+          config.headers['Accept'] = 'application/octet-stream';
         }
 
         config.headers["X-Request-Time"] = Date.now().toString();
@@ -146,12 +151,48 @@ class Core {
     this.setAuthTokens(token);
   }
 
+  // Add specific method for blob downloads
+  public async getBlob(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<BlobResponse> {
+    const response = await this.client.get(url, {
+      ...config,
+      responseType: 'blob',
+      headers: {
+        ...config?.headers,
+        'Accept': 'application/octet-stream'
+      }
+    });
+
+    return {
+      data: response.data,
+      headers: response.headers,
+      status: response.status
+    };
+  }
+
   public async get<T>(
     url: string,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
-    const response = await this.client.get<ApiResponse<T>>(url, config);
-    return response.data;
+    try {
+      const response = await this.client.get<ApiResponse<T>>(url, config);
+      return response.data;
+    } catch (error) {
+      throw this.handleApiError(error);
+    }
+  }
+
+  private handleApiError(error: unknown): Error {
+    if (axios.isAxiosError(error)) {
+      return new Error(
+        error.response?.data?.message || 
+        error.message || 
+        'An unexpected error occurred'
+      );
+    }
+    return new Error('An unexpected error occurred');
   }
 
   public async post<T, D = unknown>(
