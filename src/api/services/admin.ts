@@ -43,7 +43,7 @@ export interface FileDownloadResponse {
     isSuccess: boolean;
   };
   message: string;
-  data: any;
+  data: Blob;
 }
 
 export class ParticipantService {

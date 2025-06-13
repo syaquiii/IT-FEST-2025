@@ -27,7 +27,7 @@ export interface AuthResponse {
   };
 }
 export interface ApiResponse<T> {
-  headers: any;
+  headers: RawAxiosResponseHeaders | AxiosResponseHeaders;
   status: ApiStatus;
   message: string;
   data?: T;
