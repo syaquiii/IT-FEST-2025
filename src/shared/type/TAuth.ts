@@ -4,14 +4,20 @@ export interface LoginCredentials {
   email: string;
   password: string;
 }
+export interface RegisterCredentials {
+  email: string;
+  password: string;
+  confirm_password: string;
+}
 export interface User {
-  id: string;
+  UserID?: string;
   email: string;
   name: string;
   role: "admin" | "user" | string;
   permissions?: string[];
   createdAt?: string;
   updatedAt?: string;
+  exp?: number;
   IsAdmin?: boolean;
 }
 export interface ApiStatus {
@@ -24,7 +30,17 @@ export interface AuthResponse {
   data: {
     token: string;
     user?: User;
-  };
+    otpSent?: boolean;
+    UserID?: string;
+    otpExpiresAt?: string;
+  } | null;
+  tempData?: TempRegisterData;
+}
+export interface TempRegisterData {
+  token: string;
+  user_id: string;
+  timestamp: number;
+  expiresAt: number;
 }
 export interface ApiResponse<T> {
   headers: RawAxiosResponseHeaders | AxiosResponseHeaders;
@@ -58,4 +74,15 @@ export interface ApiErrorResponse {
   code: number;
   message: string;
   errors?: string[];
+}
+export interface OTPVerificationData {
+  userID?: string;
+  user_id?: string;
+  otp_code: string;
+}
+export interface DecodedToken {
+  UserID: string;
+  email?: string;
+  exp: number;
+  iat: number;
 }
