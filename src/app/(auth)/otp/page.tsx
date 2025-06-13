@@ -213,19 +213,20 @@ const OTPPage: React.FC = () => {
           {loading ? "Memverifikasi..." : "Verifikasi OTP"}
         </button>
       </form>
-
-      <div className="mt-4 text-center">
-        <button
-          onClick={() => {
-            console.log("➡️ Tombol Kirim Ulang diklik");
-            handleResendOTP();
-          }}
-          disabled={resendLoading}
-          className="text-blue-600 hover:text-blue-800 font-medium text-sm"
-        >
-          {resendLoading ? "Mengirim ulang..." : "Kirim Ulang OTP"}
-        </button>
-      </div>
+      {resendAvailable && (
+        <div className="mt-4 text-center">
+          <button
+            onClick={() => {
+              console.log("➡️ Tombol Kirim Ulang diklik");
+              handleResendOTP();
+            }}
+            disabled={resendLoading}
+            className="text-blue-600 hover:text-blue-800 font-medium text-sm"
+          >
+            {resendLoading ? "Mengirim ulang..." : "Kirim Ulang OTP"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

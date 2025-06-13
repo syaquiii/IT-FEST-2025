@@ -223,16 +223,28 @@ export class RegisterService {
     }
   }
 
-  private setTempRegisterData(data: any): void {
+  private setTempRegisterData(data: {
+    token: string;
+    UserID: string;
+    expiresAt: number;
+  }): void {
     localStorage.setItem(TEMP_REGISTER_KEY, JSON.stringify(data));
   }
 
-  private getTempRegisterData(): any | null {
+  private getTempRegisterData(): {
+    token: string;
+    UserID: string;
+    expiresAt: number;
+  } | null {
     const stored = localStorage.getItem(TEMP_REGISTER_KEY);
     if (!stored) return null;
 
     try {
-      const data = JSON.parse(stored);
+      const data = JSON.parse(stored) as {
+        token: string;
+        UserID: string;
+        expiresAt: number;
+      };
       if (Date.now() > data.expiresAt) {
         return null;
       }

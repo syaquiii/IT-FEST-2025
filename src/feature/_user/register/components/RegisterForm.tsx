@@ -2,7 +2,7 @@
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import { useRegister } from "../hooks/useRegister";
 import { Eye, EyeOff } from "lucide-react";
 import { useTogglePassword } from "../hooks/useTogglePassword";
@@ -16,7 +16,6 @@ const RegisterForm = () => {
     handleInputChange,
     handleSubmit,
     clearError,
-    isFormValid,
     fieldErrors,
   } = useRegister();
 
