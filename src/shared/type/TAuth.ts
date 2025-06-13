@@ -1,3 +1,5 @@
+import { AxiosResponseHeaders, RawAxiosResponseHeaders } from "axios";
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -25,6 +27,7 @@ export interface AuthResponse {
   };
 }
 export interface ApiResponse<T> {
+  headers: any;
   status: ApiStatus;
   message: string;
   data?: T;
@@ -43,4 +46,16 @@ export interface JWTPayload {
   permissions?: string[];
   exp: number;
   iat?: number;
+}
+
+export interface BlobResponse {
+  data: Blob;
+  headers: AxiosResponseHeaders | RawAxiosResponseHeaders;
+  status: number;
+}
+
+export interface ApiErrorResponse {
+  code: number;
+  message: string;
+  errors?: string[];
 }
