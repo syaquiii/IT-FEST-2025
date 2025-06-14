@@ -64,7 +64,7 @@ export class AuthService {
             ...response.data,
             role: tokenData.role,
             IsAdmin: tokenData.IsAdmin,
-            id: tokenData.id,
+            UserID: tokenData.UserID,
             permissions: tokenData.permissions,
           };
         }
@@ -115,7 +115,7 @@ export class AuthService {
       const role = IsAdmin === true ? "admin" : "user";
 
       return {
-        id: payload.UserID,
+        UserID: payload.UserID,
         email: "", // Empty since not in token
         name: "", // Empty since not in token
         role: role,
@@ -144,12 +144,10 @@ export class AuthService {
   }
 
   private getStoredToken(): string | null {
-    // Use apiClient untuk mengambil token dari local storage atau cookie yang sudah di decrypt
     return apiClient.getDecryptedToken();
   }
 
   getStoredUser(): User | null {
-    // Always get user data from token, never from localStorage
     const token = this.getStoredToken();
     if (token) {
       try {
@@ -183,7 +181,6 @@ export class AuthService {
     return user?.role === requiredRole;
   }
 
-  // Method to check admin status directly from token
   IsAdmin(): boolean {
     const token = this.getStoredToken();
     if (!token) return false;
@@ -196,7 +193,6 @@ export class AuthService {
     }
   }
 
-  // Ambil User Id by token
   getUserId(): string | null {
     const token = this.getStoredToken();
     if (!token) return null;
@@ -209,7 +205,6 @@ export class AuthService {
     }
   }
 
-  // Method untuk mengambil decrypted token untuk API call
   getTokenForApiCall(): string | null {
     return apiClient.getDecryptedToken();
   }
