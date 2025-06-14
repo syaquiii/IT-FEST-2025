@@ -1,5 +1,6 @@
 import React from "react";
 import { AuthProvider } from "@/shared/context/AuthContext";
+import { ProtectedRoute } from "@/shared/components/protected/ProtectedRoutes";
 
 export default function RootLayout({
   children,
@@ -8,7 +9,9 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        <ProtectedRoute>{children}</ProtectedRoute>
+      </AuthProvider>
     </>
   );
 }
