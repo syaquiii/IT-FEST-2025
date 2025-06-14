@@ -18,12 +18,15 @@ interface TeamListTableProps {
     teamData: TeamDetailsData[] | null;
 }
 
+const getDisplayValue = (value: string | null | undefined): string => {
+    if (!value || value.trim() === '') return 'Empty Data';
+    return value;
+};
+
 const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
     if (!teamData) {
         return <div>Loading...</div>;
     }
-
-    const validTeams = teamData.filter(team => team.team_name && team.team_name.trim() !== "");
 
     if (teamData.length === 0) {
         return <div>No teams found.</div>;
@@ -41,17 +44,25 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {validTeams.map((team, index) => (
-                    <TableRow key={index}>
-                        <TableCell className="font-medium">{team.team_name}</TableCell>
-                        <TableCell className="font-medium">{team.leader_name}</TableCell>
-                        <TableCell>{team.university}</TableCell>
+                {teamData.map((team) => (
+                    <TableRow key={team.team_id}>
+                        <TableCell className="font-medium">
+                            {getDisplayValue(team.team_name)}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                            {getDisplayValue(team.leader_name)}
+                        </TableCell>
+                        <TableCell>
+                            {getDisplayValue(team.university)}
+                        </TableCell>
                         <TableCell>
                             <span className={getPaymentStatusStyle(team.payment_status)}>
-                                {team.payment_status}
+                                {getDisplayValue(team.payment_status)}
                             </span>
                         </TableCell>
-                        <TableCell>{team.competition_name}</TableCell>
+                        <TableCell>
+                            {getDisplayValue(team.competition_name)}
+                        </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
