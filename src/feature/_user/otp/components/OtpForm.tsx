@@ -12,7 +12,7 @@ interface Props {
   loading: boolean;
   resendLoading: boolean;
   expiredError: string;
-  errorMessage?: string; // New prop for error messages
+  errorMessage?: string;
   formatTime(sec: number): string;
   onChange(idx: number, v: string): void;
   onKeyDown(idx: number, e: KeyboardEvent<HTMLInputElement>): void;
@@ -78,13 +78,31 @@ export const OtpForm: React.FC<Props> = ({
 
   if (verificationSuccess) {
     return (
-      <div className="flex items-center justify-center p-4">
-        <div className="bg-green-400 rounded-3xl border-[3px] border-green-300 p-8 text-center">
-          <h2 className="text-xl font-bold text-white mb-2">
+      <div className="flex items-center justify-center">
+        <div className="bg-green-500 shadow-lg rounded-3xl border-[3px] border-green-300 p-8 text-center transform transition-all scale-100 hover:scale-105">
+          <div className="flex justify-center mb-2">
+            <svg
+              className="w-12 h-12 text-white animate-pulse"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m-6 6h6m-3 3a9 9 0 110-18 9 9 0 010 18z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-extrabold text-white mb-2">
             Verifikasi Berhasil!
           </h2>
-          <p className="text-green-100 mb-4">Mengalihkan ke halaman login...</p>
-          <div className="animate-spin w-6 h-6 border-b-2 border-white rounded-full mx-auto"></div>
+          <p className="text-green-100 mb-4 text-lg font-medium">
+            Mengalihkan ke halaman login...
+          </p>
+          <div className="animate-spin w-8 h-8 border-b-4 border-white rounded-full mx-auto"></div>
         </div>
       </div>
     );
@@ -109,9 +127,7 @@ export const OtpForm: React.FC<Props> = ({
           <div className="bg-red-500/20 border border-red-400 p-3 rounded-xl text-center text-white">
             {expiredError}
           </div>
-        ) : (
-          <div className="bg-green-400/20 border border-green-400 p-3 rounded-xl text-center"></div>
-        )}
+        ) : null}
 
         <div className="flex justify-center gap-2">
           {otp.map((d, i) => (

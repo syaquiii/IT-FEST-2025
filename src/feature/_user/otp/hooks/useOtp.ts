@@ -71,7 +71,7 @@ export function useOtp() {
       const res = await registerService.verifyOTP(code);
       if (res.status.isSuccess) {
         setVerificationSuccess(true);
-        toast.success("Verifikasi berhasil! Mengalihkan ke halaman login...");
+        registerService.clearTempRegisterData();
         setTimeout(() => {
           window.location.href = "/login";
         }, 2000);

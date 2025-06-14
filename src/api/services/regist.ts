@@ -95,7 +95,6 @@ export class RegisterService {
           JSON.stringify(this.decodeToken(response.data.token))
         );
         this.clearTempRegisterData();
-        this.clearTempRegisterForm();
 
         return {
           status: response.status,
@@ -251,7 +250,8 @@ export class RegisterService {
     }
   }
 
-  private clearTempRegisterData(): void {
+  clearTempRegisterData(): void {
+    console.log("Menghapus data register sementara...");
     localStorage.removeItem(TEMP_REGISTER_KEY);
   }
 
