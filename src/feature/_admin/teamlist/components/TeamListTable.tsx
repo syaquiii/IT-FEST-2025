@@ -9,8 +9,10 @@ import {
     TableRow,
     TableFooter,
 } from "@/components/ui/table"
+
 import { getPaymentStatusStyle } from "@/shared/utils/paymentStyles";
 import { TeamDetailsData } from "@/api/services/admin";
+import Link from "next/link";
 
 
 interface TeamListTableProps {
@@ -41,6 +43,7 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
                     <TableHead>University</TableHead>
                     <TableHead>Payment Status</TableHead>
                     <TableHead>Competition</TableHead>
+                    <TableHead>Edit</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -62,6 +65,14 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
                         </TableCell>
                         <TableCell>
                             {getDisplayValue(team.competition_name)}
+                        </TableCell>
+                        <TableCell>
+                            <Link
+                                href={`team-list/${team.team_id}`}
+                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+                            >
+                                Edit
+                            </Link>
                         </TableCell>
                     </TableRow>
                 ))}
