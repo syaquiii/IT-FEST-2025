@@ -1,6 +1,6 @@
 "use client";
 import Stars from "@/feature/hero/components/Stars";
-import React, { useRef } from "react";
+import React, { useMemo } from "react";
 import { OtpForm } from "../components/OtpForm";
 import { useOtp } from "../hooks/useOtp";
 
@@ -19,9 +19,13 @@ const OtpContainer = () => {
     verify,
     resend,
     verificationSuccess,
+    clearErrors,
+    errorMessage,
   } = useOtp();
-  const inputRefs = Array.from({ length: 6 }, () =>
-    useRef<HTMLInputElement>(null)
+
+  const inputRefs = useMemo(
+    () => Array.from({ length: 6 }, () => React.createRef<HTMLInputElement>()),
+    []
   );
 
   const handleChange = (i: number, v: string) => {
@@ -57,10 +61,12 @@ const OtpContainer = () => {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center  overflow-hidden bg-gradient-to-b from-slate-900 to-indigo-900 relative font-changa ">
+    <main className="min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-slate-900 to-indigo-900 relative font-changa">
       <h5 className="text-5xl font-bold">Verifikasi Email</h5>
       <span>Masukkan kode 6 digit yang ada di email Anda</span>
       <OtpForm
+        errorMessage={errorMessage}
+        clearErrors={clearErrors}
         verificationSuccess={verificationSuccess}
         otp={otp}
         timeLeft={timeLeft}

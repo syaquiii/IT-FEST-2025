@@ -12,6 +12,7 @@ export function useOtp() {
   const [resendLoading, setResendLoading] = useState(false);
   const [expiredError, setExpiredError] = useState("");
   const [verificationSuccess, setVerificationSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const init = () => {
@@ -47,31 +48,49 @@ export function useOtp() {
     return () => clearTimeout(timer);
   }, [timeLeft, isPageReady]);
 
+  const clearErrors = () => {
+    setErrorMessage("");
+    setExpiredError("");
+  };
+
   const verify = async () => {
     const code = otp.join("");
-    if (!code) return toast.error("Masukkan kode OTP");
-    if (code.length !== 6) return toast.error("Kode OTP harus 6 digit");
+    if (!code) {
+      setErrorMessage("Masukkan kode OTP");
+      return;
+    }
+    if (code.length !== 6) {
+      setErrorMessage("Kode OTP harus 6 digit");
+      return;
+    }
 
     try {
       setLoading(true);
-      setExpiredError("");
+      clearErrors();
+
       const res = await registerService.verifyOTP(code);
       if (res.status.isSuccess) {
         setVerificationSuccess(true);
-        // Delay redirect untuk menampilkan pesan sukses
+        toast.success("Verifikasi berhasil! Mengalihkan ke halaman login...");
         setTimeout(() => {
           window.location.href = "/login";
         }, 2000);
+      } else {
+        setErrorMessage(res.message || "Verifikasi OTP gagal");
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Verifikasi OTP gagal";
-      if (msg.toLowerCase().includes("expired")) {
+
+      if (
+        msg.toLowerCase().includes("expired") ||
+        msg.toLowerCase().includes("kadaluarsa")
+      ) {
         setExpiredError("Kode OTP sudah kadaluarsa. Silakan kirim ulang.");
         setResendAvailable(true);
         setTimeLeft(0);
         setOtp(["", "", "", "", "", ""]);
       } else {
-        toast.error(msg);
+        setErrorMessage(msg);
         setOtp(["", "", "", "", "", ""]);
       }
     } finally {
@@ -82,17 +101,18 @@ export function useOtp() {
   const resend = async () => {
     try {
       setResendLoading(true);
+      clearErrors();
+
       await registerService.resendOTP();
       toast.success("OTP baru telah dikirim ke email Anda");
       const rem = registerService.getOTPTimeRemaining();
       setTimeLeft(rem);
       setResendAvailable(false);
-      setExpiredError("");
       setOtp(["", "", "", "", "", ""]);
     } catch (err) {
       const msg =
         err instanceof Error ? err.message : "Gagal mengirim ulang OTP";
-      toast.error(msg);
+      setErrorMessage(msg);
     } finally {
       setResendLoading(false);
     }
@@ -115,8 +135,10 @@ export function useOtp() {
     resendLoading,
     expiredError,
     verificationSuccess,
+    errorMessage,
     verify,
     resend,
     formatTime,
+    clearErrors,
   };
 }
