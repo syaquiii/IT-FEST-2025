@@ -146,14 +146,12 @@ export class RegisterService {
         payload
       );
 
-      // ⬇️ FIX: Update expiresAt agar halaman OTP bisa refresh waktu
       const updated = {
         ...temp,
-        expiresAt: Date.now() + 5 * 60 * 1000, // 5 menit dari sekarang
+        expiresAt: Date.now() + 5 * 60 * 1000,
       };
 
       localStorage.setItem("temp_register_data", JSON.stringify(updated));
-      console.log("✅ updated temp_register_data:", updated);
 
       return {
         status: response.status,
@@ -164,7 +162,6 @@ export class RegisterService {
       let errorMessage = "Gagal mengirim ulang kode OTP";
 
       if (err instanceof AxiosError) {
-        console.error("❌ Resend OTP API Error:", err.response?.data);
         const apiMessage = err.response?.data?.message;
         if (typeof apiMessage === "string") {
           errorMessage = apiMessage;
