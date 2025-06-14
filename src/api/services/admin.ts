@@ -7,6 +7,7 @@ export interface ParticipantTotalData {
 }
 
 export interface TeamDetailsData {
+  team_id: string;
   team_name: string;
   leader_name: string;
   university: string;
