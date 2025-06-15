@@ -64,8 +64,8 @@ class Core {
         }
 
         // Handle blob requests
-        if (config.responseType === 'blob') {
-          config.headers['Accept'] = 'application/octet-stream';
+        if (config.responseType === "blob") {
+          config.headers["Accept"] = "application/octet-stream";
         }
 
         config.headers["X-Request-Time"] = Date.now().toString();
@@ -158,17 +158,17 @@ class Core {
   ): Promise<BlobResponse> {
     const response = await this.client.get(url, {
       ...config,
-      responseType: 'blob',
+      responseType: "blob",
       headers: {
         ...config?.headers,
-        'Accept': 'application/octet-stream'
-      }
+        Accept: "application/octet-stream",
+      },
     });
 
     return {
       data: response.data,
       headers: response.headers,
-      status: response.status
+      status: response.status,
     };
   }
 
@@ -187,12 +187,12 @@ class Core {
   private handleApiError(error: unknown): Error {
     if (axios.isAxiosError(error)) {
       return new Error(
-        error.response?.data?.message || 
-        error.message || 
-        'An unexpected error occurred'
+        error.response?.data?.message ||
+          error.message ||
+          "An unexpected error occurred"
       );
     }
-    return new Error('An unexpected error occurred');
+    return new Error("An unexpected error occurred");
   }
 
   public async post<T, D = unknown>(
@@ -218,6 +218,15 @@ class Core {
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
     const response = await this.client.delete<ApiResponse<T>>(url, config);
+    return response.data;
+  }
+
+  public async patch<T, D = unknown>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig
+  ): Promise<ApiResponse<T>> {
+    const response = await this.client.patch<ApiResponse<T>>(url, data, config);
     return response.data;
   }
 }
