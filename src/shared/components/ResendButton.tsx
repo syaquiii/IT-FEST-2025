@@ -35,7 +35,6 @@ export const ResendButton: React.FC<ResendButtonProps> = ({
   timeLeft,
   onResend,
   formatTime,
-
   className = "",
   texts = {},
   layout = "vertical",

@@ -74,7 +74,7 @@ export function useForgotPasswordOtp() {
         setVerificationSuccess(true);
         toast.success("Verifikasi OTP berhasil!");
         setTimeout(() => {
-          window.location.href = "/reset-password";
+          window.location.href = " /forgot-password/reset-password";
         }, 2000);
       } else {
         setErrorMessage(res.message || "Verifikasi OTP gagal");
