@@ -1,6 +1,10 @@
-// src/components/OtpForm.tsx
+// src/components/OtpForm.tsx (Fixed Expired Logic)
 import React, { ClipboardEvent, KeyboardEvent, RefObject } from "react";
 import { Button } from "@/shared/components/ui/Button";
+import {
+  ForgotPasswordResendButton,
+  RegistrationResendButton,
+} from "@/shared/components/ResendButton";
 
 interface Props {
   verificationSuccess?: boolean;
@@ -20,7 +24,10 @@ interface Props {
   onVerify(): void;
   onResend(): void;
   inputRefs: RefObject<HTMLInputElement | null>[];
-  clearErrors?: () => void; // Optional prop to clear errors
+  clearErrors?: () => void;
+
+  // New prop to determine which type of OTP form this is
+  type?: "registration" | "forgot-password";
 }
 
 export const OtpForm: React.FC<Props> = ({
@@ -42,6 +49,7 @@ export const OtpForm: React.FC<Props> = ({
   onResend,
   inputRefs,
   clearErrors,
+  type = "registration",
 }) => {
   const handleInputChange = (index: number, value: string) => {
     if (clearErrors && (errorMessage || expiredError)) {
@@ -50,33 +58,59 @@ export const OtpForm: React.FC<Props> = ({
     onChange(index, value);
   };
 
+  // Check if OTP is expired
+  const isExpired = timeLeft <= 0 || expiredError;
+
+  // Loading state
   if (!isPageReady && hasAccess)
     return (
-      <div className=" flex items-center justify-center">
+      <div className="flex items-center justify-center">
         <span className="animate-spin w-8 h-8 border-b-2 border-white rounded-full" />
         <p className="text-white ml-2">Loading...</p>
       </div>
     );
 
-  if (!hasAccess)
+  // No access state
+  if (!hasAccess) {
+    const redirectPath =
+      type === "forgot-password" ? "/forgot-password" : "/register";
+    const actionText =
+      type === "forgot-password" ? "reset password" : "pendaftaran";
+    const buttonText =
+      type === "forgot-password"
+        ? "Kembali ke reset password"
+        : "Kembali ke halaman daftar";
+
     return (
       <div className="flex items-center justify-center p-4">
         <div className="bg-blue-400 rounded-3xl border-[3px] border-purple-300 p-8 text-center">
           <h2 className="text-xl font-bold text-white mb-2">Akses Ditolak</h2>
           <p className="text-purple-100 mb-4">
-            Silakan lakukan pendaftaran terlebih dahulu.
+            Silakan lakukan {actionText} terlebih dahulu.
           </p>
           <a
-            href="/register"
-            className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl"
+            href={redirectPath}
+            className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl transition-colors"
           >
-            Kembali ke halaman daftar
+            {buttonText}
           </a>
         </div>
       </div>
     );
+  }
 
+  // Success state
   if (verificationSuccess) {
+    const successMessage =
+      type === "forgot-password"
+        ? "Verifikasi berhasil! Silakan reset password Anda."
+        : "Verifikasi Berhasil!";
+
+    const redirectMessage =
+      type === "forgot-password"
+        ? "Mengalihkan ke halaman reset password..."
+        : "Mengalihkan ke halaman login...";
+
     return (
       <div className="flex items-center justify-center">
         <div className="bg-green-500 shadow-lg rounded-3xl border-[3px] border-green-300 p-8 text-center transform transition-all scale-100 hover:scale-105">
@@ -97,10 +131,10 @@ export const OtpForm: React.FC<Props> = ({
             </svg>
           </div>
           <h2 className="text-2xl font-extrabold text-white mb-2">
-            Verifikasi Berhasil!
+            {successMessage}
           </h2>
           <p className="text-green-100 mb-4 text-lg font-medium">
-            Mengalihkan ke halaman login...
+            {redirectMessage}
           </p>
           <div className="animate-spin w-8 h-8 border-b-4 border-white rounded-full mx-auto"></div>
         </div>
@@ -108,76 +142,115 @@ export const OtpForm: React.FC<Props> = ({
     );
   }
 
+  // Main OTP form
+  const instructionText =
+    type === "forgot-password"
+      ? "Kami telah mengirimkan 6-digit kode reset password ke email Anda."
+      : "Kami telah mengirimkan 6-digit kode verifikasi ke email Anda.";
+
+  const buttonText =
+    type === "forgot-password" ? "Verifikasi Kode Reset" : "Verifikasi OTP";
+  const buttonLoadingText =
+    type === "forgot-password" ? "Memverifikasi kode..." : "Memverifikasi...";
+
   return (
     <div className="flex items-center justify-center p-4">
       <div className="bg-blue-400 z-10 rounded-3xl border-purple-300 border-3 p-8 space-y-6 font-mono">
-        <div className="bg-green-400/20 border border-green-400 p-3 rounded-xl text-center">
-          <p className="text-purple-100 mb-1">
-            Kami telah mengirimkan 6-digit kode verifikasi ke email Anda.
-          </p>
-          <p className="font-bold text-yellow-500">
-            Kadaluarsa dalam: {formatTime(timeLeft)}
-          </p>
-        </div>
-        {errorMessage ? (
+        {/* Instruction or Expired Message */}
+        {isExpired ? (
+          <div className="bg-red-500/20 border border-red-400 p-3 rounded-xl text-center">
+            <p className="text-white font-bold">
+              {expiredError || "Kode OTP telah kadaluarsa!"}
+            </p>
+            <p className="text-red-100 text-sm mt-1">
+              Silakan kirim ulang kode OTP untuk melanjutkan verifikasi.
+            </p>
+          </div>
+        ) : (
+          <div className="bg-green-400/20 border border-green-400 p-3 rounded-xl text-center">
+            <p className="text-purple-100 mb-1">{instructionText}</p>
+            <p className="font-bold text-yellow-500">
+              Kadaluarsa dalam: {formatTime(timeLeft)}
+            </p>
+          </div>
+        )}
+
+        {/* Error Messages (only for non-expired errors) */}
+        {!isExpired && errorMessage && (
           <div className="bg-red-500/20 border border-red-400 p-3 rounded-xl text-center text-white">
             {errorMessage}
           </div>
-        ) : expiredError ? (
-          <div className="bg-red-500/20 border border-red-400 p-3 rounded-xl text-center text-white">
-            {expiredError}
+        )}
+
+        {/* OTP Input Fields - only show when not expired */}
+        {!isExpired && (
+          <div className="flex justify-center gap-2">
+            {otp.map((d, i) => (
+              <div key={i} className="relative">
+                <input
+                  ref={inputRefs[i] || null}
+                  type="text"
+                  maxLength={1}
+                  value={d}
+                  onChange={(e) => handleInputChange(i, e.target.value)}
+                  onKeyDown={(e) => onKeyDown(i, e)}
+                  onPaste={onPaste}
+                  className={`w-12 h-12 text-center text-xl text-black bg-white/90 border-2 rounded-xl focus:ring-purple-200 transition-colors ${
+                    errorMessage
+                      ? "border-red-400 focus:border-red-500"
+                      : "border-purple-300 focus:border-purple-500"
+                  }`}
+                  placeholder=""
+                  autoComplete="one-time-code"
+                  disabled={loading || resendLoading}
+                />
+                {!d && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="w-2 h-2 bg-black rounded-full opacity-30"></div>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-        ) : null}
+        )}
 
-        <div className="flex justify-center gap-2">
-          {otp.map((d, i) => (
-            <div key={i} className="relative">
-              <input
-                ref={inputRefs[i] || null}
-                type="text"
-                maxLength={1}
-                value={d}
-                onChange={(e) => handleInputChange(i, e.target.value)}
-                onKeyDown={(e) => onKeyDown(i, e)}
-                onPaste={onPaste}
-                className={`w-12 h-12 text-center text-xl text-black bg-white/90 border-2 rounded-xl focus:ring-purple-200 ${
-                  errorMessage || expiredError
-                    ? "border-red-400 focus:border-red-500"
-                    : "border-purple-300 focus:border-purple-500"
-                }`}
-                placeholder=""
-                autoComplete="one-time-code"
-                disabled={loading || resendLoading}
-              />
-              {!d && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-2 h-2 bg-black rounded-full opacity-30"></div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        {/* Verify Button - only show when not expired */}
+        {!isExpired && (
+          <Button
+            variant="primary"
+            className="w-full"
+            disabled={loading || otp.join("").length !== 6}
+            onClick={onVerify}
+          >
+            {loading ? buttonLoadingText : buttonText}
+          </Button>
+        )}
 
-        <Button
-          variant="primary"
-          className="w-full"
-          disabled={loading || timeLeft <= 0 || otp.join("").length !== 6}
-          onClick={onVerify}
-        >
-          {loading ? "Memverifikasi..." : "Verifikasi OTP"}
-        </Button>
-
-        {resendAvailable && (
-          <div className="text-center">
-            <p className="text-purple-100 mb-1">Tidak menerima kode?</p>
-            <button
-              onClick={onResend}
-              disabled={resendLoading}
-              className="underline text-white font-semibold"
-            >
-              {resendLoading ? "Mengirim ulang..." : "Kirim Ulang OTP"}
-            </button>
-          </div>
+        {/* Resend Button Section - always show but with different logic */}
+        {type === "registration" ? (
+          <RegistrationResendButton
+            resendAvailable={resendAvailable || isExpired}
+            resendLoading={resendLoading}
+            timeLeft={timeLeft}
+            onResend={onResend}
+            formatTime={formatTime}
+            variant="outline"
+            size="md"
+            className="w-full"
+            showTimeRemaining={!resendAvailable && !isExpired}
+          />
+        ) : (
+          <ForgotPasswordResendButton
+            resendAvailable={resendAvailable || isExpired}
+            resendLoading={resendLoading}
+            timeLeft={timeLeft}
+            onResend={onResend}
+            formatTime={formatTime}
+            variant="outline"
+            size="md"
+            className="w-full"
+            showTimeRemaining={!resendAvailable && !isExpired}
+          />
         )}
       </div>
     </div>

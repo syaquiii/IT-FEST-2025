@@ -65,6 +65,7 @@ const OtpContainer = () => {
       <h5 className="text-5xl font-bold">Verifikasi Email</h5>
       <span>Masukkan kode 6 digit yang ada di email Anda</span>
       <OtpForm
+        type="registration"
         errorMessage={errorMessage}
         clearErrors={clearErrors}
         verificationSuccess={verificationSuccess}
