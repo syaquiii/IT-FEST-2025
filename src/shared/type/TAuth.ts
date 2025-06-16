@@ -28,8 +28,9 @@ export interface AuthResponse {
   status: ApiStatus;
   message: string;
   data: {
-    token: string | null;
+    token?: string | null;
     user?: User;
+    email?: string;
     otpSent?: boolean;
     UserID?: string;
     otpExpiresAt?: string;
