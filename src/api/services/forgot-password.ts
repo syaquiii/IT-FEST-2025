@@ -2,7 +2,8 @@ import { AxiosError } from "axios";
 import { apiClient } from "../core/core";
 
 const FORGOT_PASSWORD_STORAGE_KEY = "forgot_password_data";
-
+const STORAGE_SECRET =
+  process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "mangujoterbaik";
 export interface ForgotPassCredentials {
   email: string;
 }
@@ -62,6 +63,57 @@ export class ForgotPasswordService {
     return ForgotPasswordService.instance;
   }
 
+  private encodeData(data: string): string {
+    try {
+      const encoded = btoa(data);
+      let result = "";
+      for (let i = 0; i < encoded.length; i++) {
+        const charCode =
+          encoded.charCodeAt(i) ^
+          STORAGE_SECRET.charCodeAt(i % STORAGE_SECRET.length);
+        result += String.fromCharCode(charCode);
+      }
+      return btoa(result);
+    } catch (error) {
+      console.error("Error encoding data:", error);
+      return data;
+    }
+  }
+
+  // Method untuk decoding data setelah dibaca
+  private decodeData(encodedData: string): string {
+    try {
+      // Reverse dari proses encoding
+      const firstDecode = atob(encodedData);
+      let result = "";
+      for (let i = 0; i < firstDecode.length; i++) {
+        const charCode =
+          firstDecode.charCodeAt(i) ^
+          STORAGE_SECRET.charCodeAt(i % STORAGE_SECRET.length);
+        result += String.fromCharCode(charCode);
+      }
+      return atob(result);
+    } catch (error) {
+      console.error("Error decoding data:", error);
+      return encodedData;
+    }
+  }
+
+  private validateDataIntegrity(data: ForgotPasswordStorage): boolean {
+    try {
+      return !!(
+        data &&
+        typeof data === "object" &&
+        typeof data.email === "string" &&
+        typeof data.userId === "string" &&
+        typeof data.isOTPVerified === "boolean" &&
+        typeof data.otpExpiryTime === "number"
+      );
+    } catch {
+      return false;
+    }
+  }
+
   async requestForgotPassword(
     credentials: ForgotPassCredentials
   ): Promise<ReqForgotPassResponse> {
@@ -99,7 +151,7 @@ export class ForgotPasswordService {
         };
 
         this.saveForgotPasswordData(forgotPasswordData);
-        console.log(this.getForgotPasswordData());
+        console.log("Data saved successfully");
 
         return {
           message: response.message || "Email berhasil dikirim",
@@ -201,7 +253,6 @@ export class ForgotPasswordService {
     }
   }
 
-  // Resend OTP
   async resendForgotPasswordOTP(): Promise<ForgotPassResponse> {
     try {
       const storedData = this.getForgotPasswordData();
@@ -216,10 +267,9 @@ export class ForgotPasswordService {
       });
 
       if (response?.status.isSuccess) {
-        // Update OTP expiry time setelah berhasil resend
         const updatedData: ForgotPasswordStorage = {
           ...storedData,
-          otpExpiryTime: Date.now() + 5 * 60 * 1000, // 5 menit sesuai API response
+          otpExpiryTime: Date.now() + 5 * 60 * 1000,
         };
         this.saveForgotPasswordData(updatedData);
 
@@ -303,12 +353,13 @@ export class ForgotPasswordService {
     }
   }
 
-  // Storage management methods
   private saveForgotPasswordData(data: ForgotPasswordStorage): void {
     try {
       if (typeof window !== "undefined") {
-        localStorage.setItem(FORGOT_PASSWORD_STORAGE_KEY, JSON.stringify(data));
-        console.log("💾 Saved to localStorage:", data);
+        const jsonString = JSON.stringify(data);
+        const encodedData = this.encodeData(jsonString);
+        localStorage.setItem(FORGOT_PASSWORD_STORAGE_KEY, encodedData);
+        console.log("💾 Data saved securely to localStorage");
       }
     } catch (error) {
       console.error("💾 Error saving to localStorage:", error);
@@ -320,11 +371,22 @@ export class ForgotPasswordService {
       if (typeof window !== "undefined") {
         const stored = localStorage.getItem(FORGOT_PASSWORD_STORAGE_KEY);
         if (!stored) return null;
-        return JSON.parse(stored) as ForgotPasswordStorage;
+
+        const decodedString = this.decodeData(stored);
+        const parsedData = JSON.parse(decodedString) as ForgotPasswordStorage;
+
+        if (!this.validateDataIntegrity(parsedData)) {
+          console.warn("Data integrity check failed, clearing corrupted data");
+          this.clearAllForgotPasswordData();
+          return null;
+        }
+
+        return parsedData;
       }
       return null;
     } catch (error) {
       console.error("💾 Error reading from localStorage:", error);
+      this.clearAllForgotPasswordData();
       return null;
     }
   }
@@ -346,7 +408,6 @@ export class ForgotPasswordService {
     }
   }
 
-  // OTP expiry management (now from single storage)
   getOTPTimeRemaining(): number {
     const data = this.getForgotPasswordData();
     if (!data?.otpExpiryTime) return 0;
@@ -358,7 +419,6 @@ export class ForgotPasswordService {
     return remaining;
   }
 
-  // Access control methods
   canAccessOTPPage(): boolean {
     const data = this.getForgotPasswordData();
     return !!(data?.userId && data?.email);
@@ -369,13 +429,11 @@ export class ForgotPasswordService {
     return !!(data?.isOTPVerified && (data?.verificationToken || data?.token));
   }
 
-  // Get user ID
   getUserId(): string | null {
     const data = this.getForgotPasswordData();
     return data?.userId || null;
   }
 
-  // Legacy compatibility methods
   async requestReset(credentials: ForgotPassCredentials): Promise<{
     message: string;
     data: string | null;
