@@ -17,6 +17,37 @@ export interface TeamDetailsData {
 }
 
 export interface TeamMember {
+  full_name: string;
+  student_number: string;
+}
+
+export interface TeamProgress {
+  stage_name: string;
+  stage_status: string;
+  deadline: string;
+}
+
+export interface TeamInformationData {
+  team_name: string;
+  competition_category: string;
+  leader_name: string;
+  student_number: string;
+  payment_status: string;
+  payment_transaction: string;
+  members: TeamMember[];
+  progress: TeamProgress;
+}
+
+export interface TeamInformationResponse {
+  status: {
+    code: number;
+    isSuccess: boolean;
+  };
+  message: string;
+  data: TeamInformationData; // Changed to single object since API returns one team
+}
+
+export interface TeamMember {
   name: string;
 }
 
@@ -122,7 +153,7 @@ export class ParticipantService {
 
   async getTeamDetails(): Promise<TeamDetailsResponse> {
     try {
-      const response = await apiClient.get<TeamDetailsData[]>( 
+      const response = await apiClient.get<TeamDetailsData[]>(
         "/admin/teams"
       );
 
@@ -130,7 +161,7 @@ export class ParticipantService {
         return {
           status: response.status,
           message: response.message,
-          data: response.data, 
+          data: response.data,
         };
       }
 
@@ -141,6 +172,30 @@ export class ParticipantService {
         throw new Error(err.message || "Failed to get teams");
       }
       throw new Error("Failed to get teams");
+    }
+  }
+
+  async getTeamInformation(team_id: string): Promise<TeamInformationResponse> {
+    try {
+      const response = await apiClient.get<TeamInformationData>( // Removed array type
+        `/admin/teams/${team_id}` // Added team_id to URL
+      );
+
+      if (response.status.isSuccess && response.data) {
+        return {
+          status: response.status,
+          message: response.message,
+          data: response.data // Now matches TeamInformationResponse type
+        };
+      }
+
+      return response as TeamInformationResponse;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Get team information error:", err.message);
+        throw new Error(err.message || "Failed to get team information");
+      }
+      throw new Error("Failed to get team information");
     }
   }
 }
@@ -166,7 +221,7 @@ export class ExcelService {
         console.error("Invalid response format: Expected a Blob but received", typeof response.data);
         throw new Error("The server response was not a valid file.");
       }
-      
+
       return response;
 
     } catch (err: unknown) {
@@ -186,7 +241,7 @@ export class ExcelService {
         console.error("Invalid response format: Expected a Blob but received", typeof response.data);
         throw new Error("The server response was not a valid file.");
       }
-      
+
       return response;
 
     } catch (err: unknown) {
