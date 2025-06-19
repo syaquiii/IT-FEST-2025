@@ -13,7 +13,7 @@ const generateDynamicStarsData = (count: number): DynamicStar[] => {
     const src = allStarImages[Math.floor(Math.random() * allStarImages.length)];
     const top = Math.random() * 100;
     const left = Math.random() * 100;
-    const size = Math.random() * 10 + 5;
+    const size = Math.random() * 10 + 10;
     const opacity = Math.random() * 0.5 + 0.4;
 
     return {

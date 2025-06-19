@@ -47,6 +47,10 @@
   text-shadow: 0px 0px 30px rgba(255, 255, 255, 0.6);
 }
 
+.glow-purple {
+  filter: drop-shadow(0 0 20px rgba(192, 132, 252, 0.8));
+}
+
 .comingsoonbg {
   background: linear-gradient(180deg, #0b0335 29.78%, #19217c 80%), #fff;
 }
@@ -119,6 +123,32 @@
 }
 .loading-spinner {
   @apply border-4 rounded-full w-12 h-12 border-purple-100 border-t-blue-300 animate-spin mx-auto;
+}
+
+@keyframes glitch {
+  0%, 100% {
+    transform: translate(0, 0);
+    filter: none;
+    opacity: 1;
+  }
+  25% {
+    transform: translate(0.5px, -0.5px);
+    filter: hue-rotate(10deg);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translate(-0.5px, 0.5px);
+    filter: hue-rotate(-10deg);
+    opacity: 0.9;
+  }
+  75% {
+    transform: translate(0.5px, 0.5px);
+    filter: hue-rotate(5deg);
+    opacity: 0.95;
+  }
+}
+.glitch {
+  animation: glitch 1s infinite;
 }
 
 @theme inline {
