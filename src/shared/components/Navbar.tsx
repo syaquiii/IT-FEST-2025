@@ -10,40 +10,6 @@ import { useAuth } from "../hooks/useAuth";
 import ProfileDropdown from "./ProfileDropdown";
 import Link from "next/link";
 
-const MobileNav = () => {
-  const { isAuthenticated, logout } = useAuth();
-
-  return (
-    <div className="h-screen w-screen inset-0 fixed bg-blue-500 top-0 left-0  z-50 flex flex-col items-center pt-24">
-      <ul className="flex flex-col items-center gap-6 mb-8">
-        {Navlink.map((item) => (
-          <li key={item.id} className="text-white text-lg">
-            <Navlist item={item} />
-          </li>
-        ))}
-      </ul>
-      <div className="flex flex-col gap-4">
-        {isAuthenticated ? (
-          <>
-            <Button variant={"primary"} size={"small"}>
-              Profile
-            </Button>
-            <Button variant={"secondary"} size={"small"} onClick={logout}>
-              Logout
-            </Button>
-          </>
-        ) : (
-          <Link href="/login">
-            <Button variant={"primary"} size={"small"}>
-              Daftar
-            </Button>
-          </Link>
-        )}
-      </div>
-    </div>
-  );
-};
-
 const NavbarContent = () => {
   const { isVisible } = useScrollNavbar(100, 700);
   const [isOpen, setIsOpen] = useState(false);
@@ -106,6 +72,37 @@ const NavbarContent = () => {
 
       {isOpen && <MobileNav />}
     </>
+  );
+};
+
+const MobileNav = () => {
+  const { isAuthenticated, user, logout, IsAdmin } = useAuth();
+
+  return (
+    <div className="h-screen w-screen inset-0 fixed bg-blue-500 top-0 left-0  z-50 flex flex-col items-center pt-24">
+      <ul className="flex flex-col items-center gap-6 mb-8">
+        {Navlink.map((item) => (
+          <li key={item.id} className="text-white text-lg">
+            <Navlist item={item} />
+          </li>
+        ))}
+      </ul>
+      <div className="flex flex-col gap-4">
+        {isAuthenticated ? (
+          <ProfileDropdown
+            user={user}
+            logout={logout}
+            isAdmin={IsAdmin ?? false}
+          />
+        ) : (
+          <Link href="/login">
+            <Button variant={"primary"} size={"small"}>
+              Daftar
+            </Button>
+          </Link>
+        )}
+      </div>
+    </div>
   );
 };
 
