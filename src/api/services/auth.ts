@@ -5,6 +5,7 @@ import {
   User,
 } from "@/shared/type/TAuth";
 import { apiClient } from "../core/core";
+import { AxiosError } from "axios";
 
 export class AuthService {
   private static instance: AuthService;
@@ -40,11 +41,21 @@ export class AuthService {
       }
 
       return response as AuthResponse;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        throw new Error(err.message || "Login failed");
+    } catch (err) {
+      let errorMessage = "Terjadi kesalahan saat registrasi";
+
+      if (err instanceof AxiosError) {
+        const apiMessage = err.response?.data?.data;
+        if (typeof apiMessage === "string") {
+          errorMessage = apiMessage;
+        } else if (Array.isArray(apiMessage)) {
+          errorMessage = apiMessage.join(", ");
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
       }
-      throw new Error("Login failed");
+
+      throw new Error(errorMessage);
     }
   }
 

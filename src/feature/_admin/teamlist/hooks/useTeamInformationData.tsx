@@ -1,4 +1,4 @@
-import { participantService, TeamInformationResponse, TeamInformationData } from "@/api/services/admin";
+import { participantService, TeamInformationData } from "@/api/services/admin";
 import { useState, useEffect } from "react";
 
 interface UseTeamInformationReturn {
