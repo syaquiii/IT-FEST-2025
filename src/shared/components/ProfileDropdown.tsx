@@ -70,7 +70,7 @@ const ProfileDropdown = ({ user, logout, isAdmin }: ProfileDropdownProps) => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-full bg-blue-900/95 backdrop-blur-md border-2 border-dashed border-blue-400 rounded-lg shadow-xl z-50">
+        <div className="absolute -right-4 mt-2 w-[120%] bg-blue-900/95 backdrop-blur-md border-2 border-dashed border-blue-400 rounded-lg shadow-xl z-50">
           <div className="py-2">
             <div className="px-4 py-3 border-b border-blue-400/30">
               <div className="flex items-center gap-3">

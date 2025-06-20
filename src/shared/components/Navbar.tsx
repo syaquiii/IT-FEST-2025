@@ -10,38 +10,6 @@ import { useAuth } from "../hooks/useAuth";
 import ProfileDropdown from "./ProfileDropdown";
 import Link from "next/link";
 
-const MobileNav = () => {
-  const { isAuthenticated, logout } = useAuth();
-
-  return (
-    <div className="h-screen w-screen inset-0 fixed top-0 left-0 bg-ourgray z-10 flex flex-col items-center justify-center">
-      <ul className="flex flex-col items-center gap-6 mb-8">
-        {Navlink.map((item) => (
-          <li key={item.id} className="text-white text-lg">
-            <Navlist item={item} />
-          </li>
-        ))}
-      </ul>
-      <div className="flex flex-col gap-4">
-        {isAuthenticated ? (
-          <>
-            <Button variant={"primary"} size={"small"}>
-              Profile
-            </Button>
-            <Button variant={"secondary"} size={"small"} onClick={logout}>
-              Logout
-            </Button>
-          </>
-        ) : (
-          <Button variant={"primary"} size={"small"}>
-            Daftar
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-};
-
 const NavbarContent = () => {
   const { isVisible } = useScrollNavbar(100, 700);
   const [isOpen, setIsOpen] = useState(false);
@@ -83,17 +51,19 @@ const NavbarContent = () => {
 
       {/* Mobile Navbar */}
       <nav
-        className={`mycontainer bg-transparent flex z-40 py-4 fixed justify-between items-center lg:hidden transition-transform duration-300 ${
+        className={`mycontainer bg-blue-500 flex z-100 py-4 fixed justify-between items-center lg:hidden transition-transform duration-300 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="font-bold font-robotech text-white text-glow text-2xl">
+        <div className="font-bold font-robotech text-white text-glow text-4xl">
           <h1>IT FEST</h1>
         </div>
-        <div className="">
+        <div
+          className={`${isOpen ? "bg-transparent " : "bg-white"} rounded-lg`}
+        >
           <Hamburger
-            size={20}
-            color="white"
+            size={30}
+            color={`${isOpen ? "white" : "black"}`}
             toggled={isOpen}
             toggle={setIsOpen}
           />
@@ -102,6 +72,37 @@ const NavbarContent = () => {
 
       {isOpen && <MobileNav />}
     </>
+  );
+};
+
+const MobileNav = () => {
+  const { isAuthenticated, user, logout, IsAdmin } = useAuth();
+
+  return (
+    <div className="h-screen w-screen inset-0 fixed bg-blue-500 top-0 left-0  z-50 flex flex-col items-center pt-24">
+      <ul className="flex flex-col items-center gap-6 mb-8">
+        {Navlink.map((item) => (
+          <li key={item.id} className="text-white text-lg">
+            <Navlist item={item} />
+          </li>
+        ))}
+      </ul>
+      <div className="flex flex-col gap-4">
+        {isAuthenticated ? (
+          <ProfileDropdown
+            user={user}
+            logout={logout}
+            isAdmin={IsAdmin ?? false}
+          />
+        ) : (
+          <Link href="/login">
+            <Button variant={"primary"} size={"small"}>
+              Daftar
+            </Button>
+          </Link>
+        )}
+      </div>
+    </div>
   );
 };
 
