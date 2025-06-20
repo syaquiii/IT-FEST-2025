@@ -2,7 +2,7 @@
 
 import { useTeamInformation } from "../hooks/useTeamInformationData";
 import { useParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { getPaymentStatusStyle } from "@/shared/utils/paymentStyles";
 import { formatDate } from "@/shared/utils/formatDate";
@@ -11,11 +11,13 @@ import PaymentCard from "../components/TeamInformation/PaymentCard";
 import TeamDetailsCard from "../components/TeamInformation/TeamInformationCard";
 import TeamInformationCard from "../components/TeamInformation/TeamInformationCard";
 import { getCurrentStagesStyle } from "@/shared/utils/currentStagesStyle";
+import Modal from "@/shared/components/ui/Modal"; // <-- 1. Impor komponen Modal Anda
 
 const TeamInformationContainer = () => {
   const params = useParams();
   const team_id = params.team_id as string;
   const { teamInformationData, loading, error } = useTeamInformation(team_id);
+  const [modalState, setModalState] = useState({ isOpen: false, type: null as 'accept' | 'deny' | null });
 
   if (loading) {
     return <div>Loading...</div>;
@@ -28,11 +30,26 @@ const TeamInformationContainer = () => {
   }
 
   const handleAcceptVerify = () => {
-    console.log("Accept verification");
+    setModalState({ isOpen: true, type: 'accept' });
   };
 
   const handleDenyVerify = () => {
-    console.log("Deny verification");
+    setModalState({ isOpen: true, type: 'deny' });
+  };
+
+  const handleCloseModal = () => {
+    setModalState({ isOpen: false, type: null });
+  };
+
+  const handleConfirmAction = () => {
+    if (modalState.type === 'accept') {
+      console.log("CONFIRMED: Accepting verification...");
+      // Di sini Anda akan memanggil API untuk accept, misal: acceptPaymentMutation(team_id)
+    } else if (modalState.type === 'deny') {
+      console.log("CONFIRMED: Denying verification...");
+      // Di sini Anda akan memanggil API untuk deny, misal: denyPaymentMutation(team_id)
+    }
+    handleCloseModal(); // Tutup modal setelah aksi
   };
 
   const handleCheckPayment = () => {
@@ -99,6 +116,37 @@ const TeamInformationContainer = () => {
           </div>
         </div>
       </div>
+
+      {/* 6. Render Modal di sini. Ia hanya akan tampil jika isOpen adalah true */}
+      <Modal isOpen={modalState.isOpen} onClose={handleCloseModal}>
+        <div className="text-center text-white p-4">
+          <h2 className="text-2xl font-bold mb-4">
+            {modalState.type === 'accept' ? 'Konfirmasi Terima Pembayaran' : 'Konfirmasi Tolak Pembayaran'}
+          </h2>
+          <p className="text-gray-300 mb-8">
+            Apakah Anda yakin ingin {modalState.type === 'accept' ? 'MENERIMA' : 'MENOLAK'} verifikasi pembayaran ini? Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <div className="flex justify-center gap-4">
+            <Button
+              type="button"
+              size={'small'}
+              variant="secondary"
+              onClick={handleCloseModal}
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              size={'small'}
+              onClick={handleConfirmAction}
+              className={modalState.type === 'accept' ? 'bg-green-600 hover:bg-green-500' : 'bg-red-600 hover:bg-red-500'}
+            >
+              Ya, {modalState.type === 'accept' ? 'Terima' : 'Tolak'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
     </section>
   );
 };

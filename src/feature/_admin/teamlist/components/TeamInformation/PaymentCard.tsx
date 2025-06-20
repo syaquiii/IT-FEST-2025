@@ -18,7 +18,7 @@ const PaymentCard = ({
   onCheckPayment 
 }: PaymentCardProps) => {
   return (
-    <div className="p-8 bg-blue-500 rounded-4xl text-white border-2 border-purple-300 w-full md:w-xl">
+    <div className="flex flex-col p-8 bg-blue-500 rounded-4xl text-white border-2 border-purple-300 w-full md:w-xl">
       <div className="flex justify-center space-x-6 items-center mb-4">
         <h2 className="text-xl font-bold">Payment</h2>
         <span className={`px-3 py-1 text-sm font-semibold rounded-full ${getPaymentStatusStyle(teamInfo.payment_status)}`}>
@@ -26,7 +26,7 @@ const PaymentCard = ({
         </span>
       </div>
 
-      <div className="flex justify-center space-x-8 items-center mt-8">
+      <div className="flex flex-col md:flex-row justify-center space-x-8 items-center mt-8">
         {/* Left Side */}
         <div className="text-center">
           <p className="text-gray-200 mb-2">
