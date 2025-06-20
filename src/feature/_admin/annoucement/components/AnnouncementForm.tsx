@@ -22,7 +22,6 @@ const AnnouncementForm = ({ onSuccess }: AnnouncementFormProps) => {
 
         const wasSuccessful = await postAnnouncement(message);
 
-        await postAnnouncement(message);
         if (wasSuccessful) {
             console.log("Submit successful, calling onSuccess callback!");
             setMessage("");
