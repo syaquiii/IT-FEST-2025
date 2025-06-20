@@ -17,6 +17,37 @@ export interface TeamDetailsData {
 }
 
 export interface TeamMember {
+  full_name: string;
+  student_number: string;
+}
+
+export interface TeamProgress {
+  stage_name: string;
+  stage_status: string;
+  deadline: string;
+}
+
+export interface TeamInformationData {
+  team_name: string;
+  competition_category: string;
+  leader_name: string;
+  student_number: string;
+  payment_status: string;
+  payment_transaction: string;
+  members: TeamMember[];
+  progress: TeamProgress;
+}
+
+export interface TeamInformationResponse {
+  status: {
+    code: number;
+    isSuccess: boolean;
+  };
+  message: string;
+  data: TeamInformationData; // Changed to single object since API returns one team
+}
+
+export interface TeamMember {
   name: string;
 }
 
@@ -45,6 +76,30 @@ export interface FileDownloadResponse {
   };
   message: string;
   data: Blob;
+}
+
+export interface AnnouncementData {
+  id_announcement : string;
+  date_announcement: string;
+  message_announcement: string;
+}
+
+export interface AnnouncementResponse {
+  status: {
+    code: number;
+    isSuccess: boolean;
+  };
+  message: string;
+  data: AnnouncementData[];
+}
+
+export interface CreateAnnouncementResponse {
+  status: {
+    code: number;
+    isSuccess: boolean;
+  };
+  message: string;
+  data: AnnouncementData;
 }
 
 export class ParticipantService {
@@ -122,7 +177,7 @@ export class ParticipantService {
 
   async getTeamDetails(): Promise<TeamDetailsResponse> {
     try {
-      const response = await apiClient.get<TeamDetailsData[]>( 
+      const response = await apiClient.get<TeamDetailsData[]>(
         "/admin/teams"
       );
 
@@ -130,7 +185,7 @@ export class ParticipantService {
         return {
           status: response.status,
           message: response.message,
-          data: response.data, 
+          data: response.data,
         };
       }
 
@@ -141,6 +196,30 @@ export class ParticipantService {
         throw new Error(err.message || "Failed to get teams");
       }
       throw new Error("Failed to get teams");
+    }
+  }
+
+  async getTeamInformation(team_id: string): Promise<TeamInformationResponse> {
+    try {
+      const response = await apiClient.get<TeamInformationData>( // Removed array type
+        `/admin/teams/${team_id}` // Added team_id to URL
+      );
+
+      if (response.status.isSuccess && response.data) {
+        return {
+          status: response.status,
+          message: response.message,
+          data: response.data // Now matches TeamInformationResponse type
+        };
+      }
+
+      return response as TeamInformationResponse;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Get team information error:", err.message);
+        throw new Error(err.message || "Failed to get team information");
+      }
+      throw new Error("Failed to get team information");
     }
   }
 }
@@ -166,7 +245,7 @@ export class ExcelService {
         console.error("Invalid response format: Expected a Blob but received", typeof response.data);
         throw new Error("The server response was not a valid file.");
       }
-      
+
       return response;
 
     } catch (err: unknown) {
@@ -186,7 +265,7 @@ export class ExcelService {
         console.error("Invalid response format: Expected a Blob but received", typeof response.data);
         throw new Error("The server response was not a valid file.");
       }
-      
+
       return response;
 
     } catch (err: unknown) {
@@ -200,3 +279,65 @@ export class ExcelService {
 }
 
 export const excelService = ExcelService.getInstance();
+
+
+
+export class AnnouncementService {
+  private static instance: AnnouncementService;
+
+  public static getInstance(): AnnouncementService {
+    if (!AnnouncementService.instance) {
+      AnnouncementService.instance = new AnnouncementService();
+    }
+    return AnnouncementService.instance;
+  }
+
+  async getAnnouncements(): Promise<AnnouncementResponse> {
+    try {
+      const response = await apiClient.get<AnnouncementData[]>("/admin/announcement/");
+
+      if (response.status.isSuccess && response.data) {
+        return {
+          status: response.status,
+          message: response.message,
+          data: response.data
+        };
+      }
+
+      return response as AnnouncementResponse;
+    } catch (err: unknown) {
+      console.error("Get announcements error:", err);
+      if (err instanceof Error) {
+        throw new Error(err.message || "Failed to get announcements");
+      }
+      throw new Error("Failed to get announcements");
+    }
+  }
+
+  async createAnnouncement(message: string): Promise<CreateAnnouncementResponse> {
+    try {
+      const response = await apiClient.post<AnnouncementData, { message: string }>(
+        "/admin/announcement/",
+        { message }
+      );
+
+      if (response.status.isSuccess && response.data) {
+        return {
+          status: response.status,
+          message: response.message,
+          data: response.data
+        };
+      }
+
+      return response as CreateAnnouncementResponse;
+    } catch (err: unknown) {
+      console.error("Create announcement error:", err);
+      if (err instanceof Error) {
+        throw new Error(err.message || "Failed to create announcement");
+      }
+      throw new Error("Failed to create announcement");
+    }
+  }
+}
+
+export const announcementService = AnnouncementService.getInstance();

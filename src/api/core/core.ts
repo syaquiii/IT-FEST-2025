@@ -11,7 +11,7 @@ class Core {
   private constructor() {
     this.client = axios.create({
       baseURL: "https://backend.itfest-filkom.com/api/v1",
-      timeout: 10000,
+      timeout: 40000,
       headers: {
         "Content-Type": "application/json",
       },

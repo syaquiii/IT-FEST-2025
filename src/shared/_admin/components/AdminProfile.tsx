@@ -19,6 +19,8 @@ export const AdminProfile: FC<AdminProfileProps> = ({
           src={imageUrl}
           alt={`${username}'s profile`}
           className="h-full w-full bg-white rounded-full object-cover"
+          width={48}
+          height={48}
         />
       </div>
       <div className="flex flex-col font-changa text-white">

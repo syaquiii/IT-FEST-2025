@@ -35,7 +35,7 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
     }
 
     return (
-        <Table>
+        <Table className="font-changa">
             <TableHeader>
                 <TableRow className="table-custom">
                     <TableHead>Team Name</TableHead>
@@ -79,7 +79,7 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
             </TableBody>
             <TableFooter>
                 <TableRow>
-                    <TableCell colSpan={4}>Total Team</TableCell>
+                    <TableCell colSpan={5}>Total Team</TableCell>
                     <TableCell className="text-right">{totalAll}</TableCell>
                 </TableRow>
             </TableFooter>
