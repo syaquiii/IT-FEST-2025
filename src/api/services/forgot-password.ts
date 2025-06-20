@@ -146,7 +146,7 @@ export class ForgotPasswordService {
           email: credentials.email,
           token: token,
           userId: userId || "",
-          otpExpiryTime: Date.now() + 1 * 60 * 1000,
+          otpExpiryTime: Date.now() + 5 * 60 * 1000,
           isOTPVerified: false,
         };
 
@@ -175,8 +175,6 @@ export class ForgotPasswordService {
         },
       };
     } catch (err) {
-      console.error("❌ Error:", err);
-
       let errorMessage = "Terjadi kesalahan saat meminta password reset";
       let errorCode = 500;
 
