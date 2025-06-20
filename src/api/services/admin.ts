@@ -78,6 +78,28 @@ export interface FileDownloadResponse {
   data: Blob;
 }
 
+export interface AnnouncementData {
+  message: string;
+}
+
+export interface AnnouncementResponse {
+  status: {
+    code: number;
+    isSuccess: boolean;
+  };
+  message: string;
+  data: AnnouncementData[];
+}
+
+export interface CreateAnnouncementResponse {
+  status: {
+    code: number;
+    isSuccess: boolean;
+  };
+  message: string;
+  data: AnnouncementData;
+}
+
 export class ParticipantService {
   private static instance: ParticipantService;
 
@@ -255,3 +277,65 @@ export class ExcelService {
 }
 
 export const excelService = ExcelService.getInstance();
+
+
+
+export class AnnouncementService {
+  private static instance: AnnouncementService;
+
+  public static getInstance(): AnnouncementService {
+    if (!AnnouncementService.instance) {
+      AnnouncementService.instance = new AnnouncementService();
+    }
+    return AnnouncementService.instance;
+  }
+
+  async getAnnouncements(): Promise<AnnouncementResponse> {
+    try {
+      const response = await apiClient.get<AnnouncementResponse[]>("/admin/announcement");
+
+      if (response.status.isSuccess && response.data) {
+        return {
+          status: response.status,
+          message: response.message,
+          data: response.data
+        };
+      }
+
+      return response as AnnouncementResponse;
+    } catch (err: unknown) {
+      console.error("Get announcements error:", err);
+      if (err instanceof Error) {
+        throw new Error(err.message || "Failed to get announcements");
+      }
+      throw new Error("Failed to get announcements");
+    }
+  }
+
+  async createAnnouncement(message: string): Promise<CreateAnnouncementResponse> {
+    try {
+      const response = await apiClient.post<AnnouncementData, { message: string }>(
+        "/admin/announcement",
+        { message }
+      );
+
+      if (response.status.isSuccess && response.data) {
+        return {
+          status: response.status,
+          message: response.message,
+          data: response.data
+        };
+      }
+
+      return response as CreateAnnouncementResponse;
+    } catch (err: unknown) {
+      console.error("Create announcement error:", err);
+      if (err instanceof Error) {
+        throw new Error(err.message || "Failed to create announcement");
+      }
+      throw new Error("Failed to create announcement");
+    }
+  }
+}
+
+export const announcementService = AnnouncementService.getInstance();
