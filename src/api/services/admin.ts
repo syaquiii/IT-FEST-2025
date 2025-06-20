@@ -79,7 +79,9 @@ export interface FileDownloadResponse {
 }
 
 export interface AnnouncementData {
-  message: string;
+  id_announcement : string;
+  date_announcement: string;
+  message_announcement: string;
 }
 
 export interface AnnouncementResponse {
@@ -292,7 +294,7 @@ export class AnnouncementService {
 
   async getAnnouncements(): Promise<AnnouncementResponse> {
     try {
-      const response = await apiClient.get<AnnouncementResponse[]>("/admin/announcement");
+      const response = await apiClient.get<AnnouncementData[]>("/admin/announcement/");
 
       if (response.status.isSuccess && response.data) {
         return {
@@ -315,7 +317,7 @@ export class AnnouncementService {
   async createAnnouncement(message: string): Promise<CreateAnnouncementResponse> {
     try {
       const response = await apiClient.post<AnnouncementData, { message: string }>(
-        "/admin/announcement",
+        "/admin/announcement/",
         { message }
       );
 

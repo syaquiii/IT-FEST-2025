@@ -3,10 +3,10 @@
 import { Button } from "@/shared/components/ui/Button";
 import { useState, FormEvent } from "react";
 import { usePostAnnouncement } from "../hooks/usePostAnnouncement";
-import { Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, } from "lucide-react";
 
 interface AnnouncementFormProps {
-  onSuccess?: () => void;
+    onSuccess?: () => void;
 }
 
 const AnnouncementForm = ({ onSuccess }: AnnouncementFormProps) => {
@@ -15,16 +15,19 @@ const AnnouncementForm = ({ onSuccess }: AnnouncementFormProps) => {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         if (!message.trim()) {
             return;
         }
 
+        const wasSuccessful = await postAnnouncement(message);
+
         await postAnnouncement(message);
-        if (success) {
+        if (wasSuccessful) {
+            console.log("Submit successful, calling onSuccess callback!");
             setMessage("");
-            onSuccess?.();
-            reset();
+            onSuccess?.(); // Sekarang ini PASTI akan terpanggil
+            reset(); // Anda bisa tetap memanggil reset di sini jika perlu
         }
     };
 
@@ -52,7 +55,12 @@ const AnnouncementForm = ({ onSuccess }: AnnouncementFormProps) => {
                     {loading ? (
                         <>
                             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Announcing...
+                            Announcing... (Estimation : 30 Seconds)
+                        </>
+                    ) : success ? (
+                        <>
+                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                            Successfully Announced!
                         </>
                     ) : (
                         "Announce"
