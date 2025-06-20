@@ -1,6 +1,8 @@
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
 import Link from "next/link";
+import { useTogglePassword } from "../../register/hooks/useTogglePassword";
+import { Eye, EyeOff } from "lucide-react";
 
 interface LoginFormProps {
   email: string;
@@ -24,6 +26,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   setPassword,
   handleSubmit,
 }) => {
+  const passwordToggle = useTogglePassword();
   if (isAuthenticated) {
     return (
       <div className="flex items-center justify-center">
@@ -80,16 +83,30 @@ const LoginForm: React.FC<LoginFormProps> = ({
             className="text-sm sm:text-base"
           />
 
-          <Input
-            label="Password"
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={loading}
-            className="text-sm sm:text-base"
-          />
+          <div className="relative">
+            <Input
+              label="Password"
+              type={passwordToggle.isVisible ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+              className="text-sm sm:text-base"
+            />
+            <button
+              type="button"
+              onClick={passwordToggle.toggleVisibility}
+              className="absolute right-3 top-11 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              tabIndex={-1}
+            >
+              {passwordToggle.isVisible ? (
+                <EyeOff size={18} />
+              ) : (
+                <Eye size={18} />
+              )}
+            </button>
+          </div>
 
           <div className="text-sm text-right sm:text-sm text-white/80 text-glow ">
             <Link href={"/forgot-password"} className="text-[#85FFF5]">
