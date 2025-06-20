@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
 import { useTeamInformation } from "../hooks/useTeamInformationData";
+import { getCurrentStagesStyle } from "@/shared/utils/currentStagesStyle";
 
 const TeamListContainer = () => {
     const params = useParams();
@@ -44,8 +45,8 @@ const TeamListContainer = () => {
                     {/* Kartu Stages */}
                     <div className="p-8 bg-blue-500 rounded-4xl text-white border-2 border-purple-300 text-center">
                         <h2 className="text-xl font-bold mb-2">Stages</h2>
-                        <div className="text-center bg-gray-700 py-2 px-4 rounded-lg mb-4">
-                            <p className="font-semibold">{teamInformationData.progress.stage_status}</p>
+                        <div className="text-center py-2 rounded-lg mb-4">
+                            <p className={getCurrentStagesStyle(teamInformationData.progress.stage_status)}>{teamInformationData.progress.stage_status}</p>
                         </div>
                         <div className="text-center">
                             <p className="text-lg font-bold">{teamInformationData.progress.stage_name}</p>
