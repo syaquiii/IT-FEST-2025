@@ -25,6 +25,14 @@ const getDisplayValue = (value: string | null | undefined): string => {
     return value;
 };
 
+const isValidTeam = (team: TeamDetailsData): boolean => {
+    return Boolean(
+        team.team_name?.trim() &&
+        team.leader_name?.trim() &&
+        team.university?.trim()
+    );
+};
+
 const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
     if (!teamData) {
         return <div>Loading...</div>;
@@ -33,6 +41,8 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
     if (teamData.length === 0) {
         return <div>No teams found.</div>;
     }
+
+    const validTeams = teamData.filter(isValidTeam);
 
     return (
         <Table className="font-changa">
@@ -47,7 +57,7 @@ const TeamListTable = ({ totalAll, teamData }: TeamListTableProps) => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {teamData.map((team) => (
+                {validTeams.map((team) => (
                     <TableRow key={team.team_id}>
                         <TableCell className="font-medium">
                             {getDisplayValue(team.team_name)}
