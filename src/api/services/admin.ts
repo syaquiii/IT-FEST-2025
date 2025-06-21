@@ -1,5 +1,6 @@
 import { BlobResponse } from "@/shared/type/TAuth";
 import { apiClient } from "../core/core";
+import axios from "axios";
 
 export interface ParticipantTotalData {
   total_uiux: number;
@@ -79,7 +80,7 @@ export interface FileDownloadResponse {
 }
 
 export interface AnnouncementData {
-  id_announcement : string;
+  id_announcement: string;
   date_announcement: string;
   message_announcement: string;
 }
@@ -100,6 +101,15 @@ export interface CreateAnnouncementResponse {
   };
   message: string;
   data: AnnouncementData;
+}
+
+export interface UpdateTeamResponse {
+  status: {
+    code: number;
+    isSuccess: boolean;
+  };
+  message: string;
+  data: TeamInformationData;
 }
 
 export class ParticipantService {
@@ -341,3 +351,85 @@ export class AnnouncementService {
 }
 
 export const announcementService = AnnouncementService.getInstance();
+
+
+export class TeamsService {
+  private static instance: TeamsService;
+
+  public static getInstance(): TeamsService {
+    if (!TeamsService.instance) {
+      TeamsService.instance = new TeamsService();
+    }
+    return TeamsService.instance;
+  }
+
+  async verifyPayment(team_id: string): Promise<UpdateTeamResponse> {
+    try {
+      const response = await apiClient.patch<TeamInformationData>(
+        `/admin/teams/${team_id}`,
+        { team_id: team_id, payment_status: "terverifikasi" }
+      );
+
+      if (response.status.isSuccess) {
+        return response as UpdateTeamResponse;
+      }
+
+      // Jika response success tapi tidak ada data, lemparkan pesan dari server
+      throw new Error(response.message || "Failed to verify payment");
+    } catch (err: unknown) {
+      console.error("Verify payment error:", err);
+
+      // --- LOGIKA ERROR HANDLING BARU ---
+      let errorMessage = "An unexpected error occurred while verifying payment";
+      if (axios.isAxiosError(err)) {
+        // Jika error memiliki response dari server (misal: 400, 404, 500)
+        // dan response tersebut memiliki pesan error di dalam body JSON-nya
+        if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        } else {
+          // Jika ini adalah network error murni dari Axios (misal: CORS, timeout)
+          errorMessage = err.message;
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      throw new Error(errorMessage);
+    }
+  }
+
+  async unverifyPayment(team_id: string): Promise<UpdateTeamResponse> {
+    try {
+      const response = await apiClient.patch<TeamInformationData>(
+        `/admin/teams/${team_id}`,
+        { team_id: team_id, payment_status: "belum terverifikasi" }
+      );
+
+      if (response.status.isSuccess) {
+        return response as UpdateTeamResponse;
+      }
+
+      // Jika response success tapi tidak ada data, lemparkan pesan dari server
+      throw new Error(response.message || "Failed to verify payment");
+    } catch (err: unknown) {
+      console.error("Verify payment error:", err);
+
+      // --- LOGIKA ERROR HANDLING BARU ---
+      let errorMessage = "An unexpected error occurred while verifying payment";
+      if (axios.isAxiosError(err)) {
+        // Jika error memiliki response dari server (misal: 400, 404, 500)
+        // dan response tersebut memiliki pesan error di dalam body JSON-nya
+        if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        } else {
+          // Jika ini adalah network error murni dari Axios (misal: CORS, timeout)
+          errorMessage = err.message;
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      throw new Error(errorMessage);
+    }
+  }
+}
+
+export const teamsService = TeamsService.getInstance();
