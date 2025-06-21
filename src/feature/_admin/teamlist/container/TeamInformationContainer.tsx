@@ -10,11 +10,12 @@ import PaymentCard from "../components/TeamInformation/PaymentCard";
 import TeamInformationCard from "../components/TeamInformation/TeamInformationCard";
 import { getCurrentStagesStyle } from "@/shared/utils/currentStagesStyle";
 import Modal from "@/shared/components/ui/Modal";
+import { teamsService } from "@/api/services/admin";
 
 const TeamInformationContainer = () => {
   const params = useParams();
   const team_id = params.team_id as string;
-  const { teamInformationData, loading, error } = useTeamInformation(team_id);
+  const { teamInformationData, loading, error, refetch } = useTeamInformation(team_id);
   const [modalState, setModalState] = useState({ isOpen: false, type: null as 'accept' | 'deny' | null });
 
   if (loading) {
@@ -39,15 +40,21 @@ const TeamInformationContainer = () => {
     setModalState({ isOpen: false, type: null });
   };
 
-  const handleConfirmAction = () => {
-    if (modalState.type === 'accept') {
-      console.log("CONFIRMED: Accepting verification...");
-      // Di sini Anda akan memanggil API untuk accept, misal: acceptPaymentMutation(team_id)
-    } else if (modalState.type === 'deny') {
-      console.log("CONFIRMED: Denying verification...");
-      // Di sini Anda akan memanggil API untuk deny, misal: denyPaymentMutation(team_id)
+  const handleConfirmAction = async () => {
+    try {
+      if (modalState.type === 'accept') {
+        await teamsService.verifyPayment(team_id);
+      } else if (modalState.type === 'deny') {
+        await teamsService.unverifyPayment(team_id);
+      }
+      // Refresh team data after successful update
+      await refetch();
+    } catch (err) {
+      console.error('Error updating payment status:', err);
+      // You might want to show an error toast/notification here
+    } finally {
+      handleCloseModal();
     }
-    handleCloseModal(); // Tutup modal setelah aksi
   };
 
   const handleCheckPayment = () => {
