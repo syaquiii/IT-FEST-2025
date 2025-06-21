@@ -4,14 +4,12 @@ import { useTeamInformation } from "../hooks/useTeamInformationData";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import Link from "next/link";
-import { getPaymentStatusStyle } from "@/shared/utils/paymentStyles";
 import { formatDate } from "@/shared/utils/formatDate";
 import { Button } from "@/shared/components/ui/Button";
 import PaymentCard from "../components/TeamInformation/PaymentCard";
-import TeamDetailsCard from "../components/TeamInformation/TeamInformationCard";
 import TeamInformationCard from "../components/TeamInformation/TeamInformationCard";
 import { getCurrentStagesStyle } from "@/shared/utils/currentStagesStyle";
-import Modal from "@/shared/components/ui/Modal"; // <-- 1. Impor komponen Modal Anda
+import Modal from "@/shared/components/ui/Modal";
 
 const TeamInformationContainer = () => {
   const params = useParams();
