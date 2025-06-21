@@ -4,7 +4,7 @@ export const getPaymentStatusStyle = (status: string) => {
             return "px-2 py-1 rounded-md text-sm bg-red-700 text-white";
         case "belum bayar":
             return "px-2 py-1 rounded-md text-sm bg-yellow-700 text-white";
-        case "sudah verifikasi":
+        case "terverifikasi":
             return "px-2 py-1 rounded-md text-sm bg-green-800 text-white";
         default:
             return "px-2 py-1 rounded-md text-sm bg-gray-200";
